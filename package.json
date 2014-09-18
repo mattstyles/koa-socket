@@ -1,0 +1,11 @@
+{
+  "name": "koa-socket",
+  "version": "0.0.0",
+  "description": "Sugar around creating listeners for sockets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
