@@ -1,11 +1,12 @@
 {
   "name": "koa-socket",
   "version": "0.0.0",
-  "description": "Sugar around creating listeners for sockets",
+  "description": "Koa meet socket.io connected socket",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "keywords": [ "koa", "socket.io", "web sockets" ],
+  "author": "mattstyles @personalurban",
   "license": "ISC"
 }
