@@ -18,12 +18,6 @@ var _listeners = [];
 
 
 /**
- * Number of active connections
- */
-var _numConnections = 0;
-
-
-/**
  * List of id's of active connections
  */
 var _connections = [];
@@ -54,11 +48,8 @@ koaSocket.start = function( koa ) {
     koa.server = http.createServer( koa.callback() );
     koa.io = socketIO( koa.server );
 
-    koa.io.on( 'connection', function onConnected( socket ) {
-        console.log( 'Socket connected', socket.id );
-        this.attach( socket );
-    }.bind( this ));
-},
+    koa.io.on( 'connection', onConnect );
+};
 
 
 /**
@@ -69,7 +60,8 @@ koaSocket.start = function( koa ) {
 koaSocket.use = function( fn ) {
     _middleware.push( fn );
     return koaSocket;
-},
+};
+
 
 /**
  * Getter for the list of connected sockets
@@ -78,7 +70,7 @@ koaSocket.use = function( fn ) {
  */
 koaSocket.getConnections = function() {
     return _connections;
-},
+};
 
 
 /**
@@ -92,7 +84,7 @@ koaSocket.on = function( event, handler ) {
         event: event,
         handler: handler
     });
-},
+};
 
 
 /**
@@ -101,14 +93,15 @@ koaSocket.on = function( event, handler ) {
  * @param socket - socket.io socket connection
  */
 koaSocket.attach = function( socket ) {
-    var sock = new Socket( socket, _listeners, _middleware );
-    _connections.push({
-        id: socket.id,
-        socket: socket
+    socket.on( 'disconnect', function() {
+        console.log( '' )
     });
-    _numConnections++;
+
+
+    var sock = new Socket( socket, _listeners, _middleware );
+    addConnection( socket );
     return sock;
-}
+};
 
 
 
@@ -117,7 +110,7 @@ koaSocket.attach = function( socket ) {
  */
 Object.defineProperty( koaSocket, 'numConnections', {
     get: function() {
-        return _numConnections;
+        return _connections.length;
     }
 });
 
@@ -133,4 +126,41 @@ function addConnection( socket ) {
         id: socket.id,
         socket: socket
     });
+}
+
+
+/**
+ * Removes a connection from the list
+ */
+function removeConnection( id ) {
+    var i = _connections.length - 1;
+    while( i > 0 ) {
+        if ( _connections[ i ].id === id ) {
+            break;
+        }
+        i--;
+    }
+
+    _connections.splice( i, 1 );
+}
+
+
+/**
+ * Fired when a socket connects to the server.
+ * Attaches the socket to koaSocket and sets up a disconnect event.
+ *
+ * @param socket {socket connection}
+ */
+function onConnect( socket ) {
+    console.log( 'Socket connected', socket.id );
+    socket.on( 'disconnect', onDisconnect );
+    koaSocket.attach( socket );
+}
+
+/**
+ * Fired when a socket disconnects from the server,
+ */
+function onDisconnect() {
+    console.log( 'Socket disconnected', this.id );
+    removeConnection( this.id );
 }
