@@ -117,8 +117,6 @@ koaSocket.on = function( event, handler ) {
  * @param socket - socket.io socket connection
  */
 koaSocket.attach = function( socket ) {
-    socket.on( 'disconnect', onDisconnect );
-
     var sock = new Socket( socket, _listeners, _middleware );
     addConnection( socket );
     return sock;
