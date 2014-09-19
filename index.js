@@ -5,7 +5,10 @@
  * © 2014 Matt Styles @personalurban
  */
 
-var Socket = require( './lib/socket' );
+var http = require( 'http' ),
+    socketIO = require( 'socket.io' ),
+
+    Socket = require( './lib/socket' );
 
 
 /**
@@ -20,6 +23,27 @@ var listeners = [];
 module.exports = {
 
     /**
+     * Takes a koa instance (or any object that implements an http handler) and attaches socket.io to it
+     *
+     * @param koa {Koa || http handler} koa instance or object that implements handler as callback function
+     */
+    use: function( koa ) {
+        if ( koa.server || koa.io ) {
+            console.error( 'Sockets failed to initialise\nInstance may already exist' );
+            return;
+        }
+
+        koa.server = http.createServer( koa.callback() );
+        koa.io = socketIO( koa.server );
+
+        koa.io.on( 'connection', function onConnected( socket ) {
+            console.log( 'Socket connected', socket.id );
+            this.attach( socket );
+        }.bind( this ));
+    },
+
+
+    /**
      * Stores a listener, ready to attach.
      *
      * @param event {String} name of event
@@ -31,6 +55,7 @@ module.exports = {
             handler: handler
         });
     },
+    
 
     /**
      * Binds listeners to the socket connection
