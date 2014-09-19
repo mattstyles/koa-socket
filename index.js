@@ -29,6 +29,11 @@ var _numConnections = 0;
 var _connections = [];
 
 
+/**
+ * Middleware list
+ */
+var _middleware = [];
+
 
 /**
  * Expose object to manage attaching listeners to connections
@@ -60,8 +65,7 @@ var koaSocket = module.exports = {
      *
      */
     use: function( fn ) {
-    
-
+        _middleware.push( fn );
     },
 
     /**
@@ -94,7 +98,7 @@ var koaSocket = module.exports = {
      * @param socket - socket.io socket connection
      */
     attach: function( socket ) {
-        var sock = new Socket( socket, _listeners );
+        var sock = new Socket( socket, _listeners, _middleware );
         _connections.push({
             id: socket.id,
             socket: socket
