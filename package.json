@@ -14,6 +14,8 @@
   "author": "mattstyles @personalurban",
   "license": "ISC",
   "dependencies": {
+    "co": "^3.1.0",
+    "koa-compose": "^2.3.0",
     "socket.io": "^1.1.0"
   }
 }
