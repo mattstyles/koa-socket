@@ -34,6 +34,20 @@ var _middleware = [];
  */
 var koaSocket = module.exports = {};
 
+
+/**
+ * Connection callback.
+ * Expects to pass the socket to the callback.
+ */
+koaSocket.onConnect = null;
+
+/**
+ * Discount callback.
+ * Expects to pass the socket to the callback.
+ */
+koaSocket.onDisconnect = null;
+
+
 /**
  * Takes a koa instance (or any object that implements an http handler) and attaches socket.io to it
  *
@@ -80,6 +94,16 @@ koaSocket.getConnections = function() {
  * @param handler {Function} the callback to fire on event
  */
 koaSocket.on = function( event, handler ) {
+    if ( event === 'connection' ) {
+        koaSocket.onConnect = handler;
+        return;
+    }
+
+    if ( event === 'disconnect' ) {
+        koaSocket.onDisconnect = handler;
+        return;
+    }
+
     _listeners.push({
         event: event,
         handler: handler
@@ -93,10 +117,7 @@ koaSocket.on = function( event, handler ) {
  * @param socket - socket.io socket connection
  */
 koaSocket.attach = function( socket ) {
-    socket.on( 'disconnect', function() {
-        console.log( '' )
-    });
-
+    socket.on( 'disconnect', onDisconnect );
 
     var sock = new Socket( socket, _listeners, _middleware );
     addConnection( socket );
@@ -154,6 +175,9 @@ function removeConnection( id ) {
 function onConnect( socket ) {
     console.log( 'Socket connected', socket.id );
     socket.on( 'disconnect', onDisconnect );
+    if ( koaSocket.onConnect ) {
+        koaSocket.onConnect( socket );
+    }
     koaSocket.attach( socket );
 }
 
@@ -162,5 +186,8 @@ function onConnect( socket ) {
  */
 function onDisconnect() {
     console.log( 'Socket disconnected', this.id );
+    if ( koaSocket.onDisconnect ) {
+        koaSocket.onDisconnect( this );
+    }
     removeConnection( this.id );
 }

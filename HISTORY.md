@@ -1,3 +1,7 @@
+##
+
+* _add_ - explicit on and off connection callbacks
+
 
 ## 0.2.0 - 19.09.2014
 
