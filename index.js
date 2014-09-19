@@ -62,10 +62,13 @@ koaSocket.start = function( koa ) {
 
 
 /**
+ * Add a function to the stack of middleware
  *
+ * @param fn {function}
  */
 koaSocket.use = function( fn ) {
     _middleware.push( fn );
+    return koaSocket;
 },
 
 /**
@@ -123,6 +126,7 @@ Object.defineProperty( koaSocket, 'numConnections', {
  * Adds a new connection to the list
  *
  * @param socket {Socket instance}
+ * @private
  */
 function addConnection( socket ) {
     _connections.push({
