@@ -14,20 +14,33 @@ var http = require( 'http' ),
 /**
  * Listeners ready to attach to a socket instance
  */
-var listeners = [];
+var _listeners = [];
+
+
+/**
+ * Number of active connections
+ */
+var _numConnections = 0;
+
+
+/**
+ * List of id's of active connections
+ */
+var _connections = [];
+
 
 
 /**
  * Expose object to manage attaching listeners to connections
  */
-module.exports = {
+var koaSocket = module.exports = {
 
     /**
      * Takes a koa instance (or any object that implements an http handler) and attaches socket.io to it
      *
      * @param koa {Koa || http handler} koa instance or object that implements handler as callback function
      */
-    use: function( koa ) {
+    start: function( koa ) {
         if ( koa.server || koa.io ) {
             console.error( 'Sockets failed to initialise\nInstance may already exist' );
             return;
@@ -44,18 +57,36 @@ module.exports = {
 
 
     /**
+     *
+     */
+    use: function( fn ) {
+    
+
+    },
+
+    /**
+     * Getter for the list of connected sockets
+     *
+     * @returns {array}
+     */
+    getConnections: function() {
+        return _connections;
+    },
+
+
+    /**
      * Stores a listener, ready to attach.
      *
      * @param event {String} name of event
      * @param handler {Function} the callback to fire on event
      */
     on: function( event, handler ) {
-        listeners.push({
+        _listeners.push({
             event: event,
             handler: handler
         });
     },
-    
+
 
     /**
      * Binds listeners to the socket connection
@@ -63,6 +94,35 @@ module.exports = {
      * @param socket - socket.io socket connection
      */
     attach: function( socket ) {
-        return new Socket( socket, listeners );
+        var sock = new Socket( socket, _listeners );
+        _connections.push({
+            id: socket.id,
+            socket: socket
+        });
+        _numConnections++;
+        return sock;
     }
 };
+
+
+/**
+ * @get numConnections
+ */
+Object.defineProperty( koaSocket, 'numConnections', {
+    get: function() {
+        return _numConnections;
+    }
+});
+
+
+/**
+ * Adds a new connection to the list
+ *
+ * @param socket {Socket instance}
+ */
+function addConnection( socket ) {
+    _connections.push({
+        id: socket.id,
+        socket: socket
+    });
+}
