@@ -1,21 +1,17 @@
+/**
+ * Koa-socket
+ * ---
+ *
+ * © 2014 Matt Styles @personalurban
+ */
+
+var Socket = require( './lib/socket' );
+
 
 /**
  * Listeners ready to attach to a socket instance
  */
 var listeners = [];
-
-
-/**
- * Socket constuctor.
- * Appends listeners to a socket instance.
- *
- * @param socket - socket.io socket connection
- */
-var Socket = function( socket ) {
-    listeners.forEach( function( listener ) {
-        socket.on( listener.event, listener.handler );
-    });
-};
 
 
 /**
