@@ -38,75 +38,75 @@ var _middleware = [];
 /**
  * Expose object to manage attaching listeners to connections
  */
-var koaSocket = module.exports = {
+var koaSocket = module.exports = {};
 
-    /**
-     * Takes a koa instance (or any object that implements an http handler) and attaches socket.io to it
-     *
-     * @param koa {Koa || http handler} koa instance or object that implements handler as callback function
-     */
-    start: function( koa ) {
-        if ( koa.server || koa.io ) {
-            console.error( 'Sockets failed to initialise\nInstance may already exist' );
-            return;
-        }
-
-        koa.server = http.createServer( koa.callback() );
-        koa.io = socketIO( koa.server );
-
-        koa.io.on( 'connection', function onConnected( socket ) {
-            console.log( 'Socket connected', socket.id );
-            this.attach( socket );
-        }.bind( this ));
-    },
-
-
-    /**
-     *
-     */
-    use: function( fn ) {
-        _middleware.push( fn );
-    },
-
-    /**
-     * Getter for the list of connected sockets
-     *
-     * @returns {array}
-     */
-    getConnections: function() {
-        return _connections;
-    },
-
-
-    /**
-     * Stores a listener, ready to attach.
-     *
-     * @param event {String} name of event
-     * @param handler {Function} the callback to fire on event
-     */
-    on: function( event, handler ) {
-        _listeners.push({
-            event: event,
-            handler: handler
-        });
-    },
-
-
-    /**
-     * Binds listeners to the socket connection
-     *
-     * @param socket - socket.io socket connection
-     */
-    attach: function( socket ) {
-        var sock = new Socket( socket, _listeners, _middleware );
-        _connections.push({
-            id: socket.id,
-            socket: socket
-        });
-        _numConnections++;
-        return sock;
+/**
+ * Takes a koa instance (or any object that implements an http handler) and attaches socket.io to it
+ *
+ * @param koa {Koa || http handler} koa instance or object that implements handler as callback function
+ */
+koaSocket.start = function( koa ) {
+    if ( koa.server || koa.io ) {
+        console.error( 'Sockets failed to initialise\nInstance may already exist' );
+        return;
     }
-};
+
+    koa.server = http.createServer( koa.callback() );
+    koa.io = socketIO( koa.server );
+
+    koa.io.on( 'connection', function onConnected( socket ) {
+        console.log( 'Socket connected', socket.id );
+        this.attach( socket );
+    }.bind( this ));
+},
+
+
+/**
+ *
+ */
+koaSocket.use = function( fn ) {
+    _middleware.push( fn );
+},
+
+/**
+ * Getter for the list of connected sockets
+ *
+ * @returns {array}
+ */
+koaSocket.getConnections = function() {
+    return _connections;
+},
+
+
+/**
+ * Stores a listener, ready to attach.
+ *
+ * @param event {String} name of event
+ * @param handler {Function} the callback to fire on event
+ */
+koaSocket.on = function( event, handler ) {
+    _listeners.push({
+        event: event,
+        handler: handler
+    });
+},
+
+
+/**
+ * Binds listeners to the socket connection
+ *
+ * @param socket - socket.io socket connection
+ */
+koaSocket.attach = function( socket ) {
+    var sock = new Socket( socket, _listeners, _middleware );
+    _connections.push({
+        id: socket.id,
+        socket: socket
+    });
+    _numConnections++;
+    return sock;
+}
+
 
 
 /**
