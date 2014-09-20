@@ -1,7 +1,7 @@
-##
+## 0.3.0 - 20.09.2014
 
 * _add_ - explicit on and off connection callbacks
-
+* _fix_ - disconnect handler only once
 
 ## 0.2.0 - 19.09.2014
 
