@@ -1,6 +1,6 @@
 {
   "name": "koa-socket",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Koa meets socket.io connected socket",
   "main": "index.js",
   "scripts": {

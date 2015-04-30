@@ -1,3 +1,7 @@
+## 0.4.0 - 30.04.2015
+
+* _add_ - event to data packet - *[git-jiby-me](https://github.com/git-jiby-me)*
+
 ## 0.3.0 - 20.09.2014
 
 * _add_ - explicit on and off connection callbacks
