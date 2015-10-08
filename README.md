@@ -2,6 +2,8 @@
 
 > Sugar for connecting socket.io to a koa instance
 
+__Note: The core Koa team have now bashed out [koa.io](https://github.com/koajs/koa.io) which might be a better fit for whatever you need sockets for. The scope and implementation differs so there is still value here but for many use-cases koa.io is at least worth consideration.__
+
 ## Installation
 
 ```
