@@ -6,46 +6,46 @@
  */
 
 var http = require( 'http' ),
-    socketIO = require( 'socket.io' ),
+  socketIO = require( 'socket.io' ),
 
-    Socket = require( './lib/socket' );
+  Socket = require( './lib/socket' )
 
 
 /**
  * Listeners ready to attach to a socket instance
  */
-var _listeners = [];
+var _listeners = []
 
 
 /**
  * List of id's of active connections
  */
-var _connections = [];
+var _connections = []
 
 
 /**
  * Middleware list
  */
-var _middleware = [];
+var _middleware = []
 
 
 /**
  * Expose object to manage attaching listeners to connections
  */
-var koaSocket = module.exports = {};
+var koaSocket = module.exports = {}
 
 
 /**
  * Connection callback.
  * Expects to pass the socket to the callback.
  */
-koaSocket.onConnect = null;
+koaSocket.onConnect = null
 
 /**
  * Discount callback.
  * Expects to pass the socket to the callback.
  */
-koaSocket.onDisconnect = null;
+koaSocket.onDisconnect = null
 
 
 /**
@@ -54,16 +54,16 @@ koaSocket.onDisconnect = null;
  * @param koa {Koa || http handler} koa instance or object that implements handler as callback function
  */
 koaSocket.start = function( koa ) {
-    if ( koa.server || koa.io ) {
-        console.error( 'Sockets failed to initialise\nInstance may already exist' );
-        return;
-    }
+  if ( koa.server || koa.io ) {
+    console.error( 'Sockets failed to initialise\nInstance may already exist' )
+    return
+  }
 
-    koa.server = http.createServer( koa.callback() );
-    koa.io = socketIO( koa.server );
+  koa.server = http.createServer( koa.callback() )
+  koa.io = socketIO( koa.server )
 
-    koa.io.on( 'connection', onConnect );
-};
+  koa.io.on( 'connection', onConnect )
+}
 
 
 /**
@@ -72,9 +72,9 @@ koaSocket.start = function( koa ) {
  * @param fn {function}
  */
 koaSocket.use = function( fn ) {
-    _middleware.push( fn );
-    return koaSocket;
-};
+  _middleware.push( fn )
+  return koaSocket
+}
 
 
 /**
@@ -83,8 +83,8 @@ koaSocket.use = function( fn ) {
  * @returns {array}
  */
 koaSocket.getConnections = function() {
-    return _connections;
-};
+  return _connections
+}
 
 
 /**
@@ -94,21 +94,21 @@ koaSocket.getConnections = function() {
  * @param handler {Function} the callback to fire on event
  */
 koaSocket.on = function( event, handler ) {
-    if ( event === 'connection' ) {
-        koaSocket.onConnect = handler;
-        return;
-    }
+  if ( event === 'connection' ) {
+    koaSocket.onConnect = handler
+    return
+  }
 
-    if ( event === 'disconnect' ) {
-        koaSocket.onDisconnect = handler;
-        return;
-    }
+  if ( event === 'disconnect' ) {
+    koaSocket.onDisconnect = handler
+    return
+  }
 
-    _listeners.push({
-        event: event,
-        handler: handler
-    });
-};
+  _listeners.push({
+    event: event,
+    handler: handler
+  })
+}
 
 
 /**
@@ -117,10 +117,10 @@ koaSocket.on = function( event, handler ) {
  * @param socket - socket.io socket connection
  */
 koaSocket.attach = function( socket ) {
-    var sock = new Socket( socket, _listeners, _middleware );
-    addConnection( socket );
-    return sock;
-};
+  var sock = new Socket( socket, _listeners, _middleware )
+  addConnection( socket )
+  return sock
+}
 
 
 
@@ -128,10 +128,10 @@ koaSocket.attach = function( socket ) {
  * @get numConnections
  */
 Object.defineProperty( koaSocket, 'numConnections', {
-    get: function() {
-        return _connections.length;
-    }
-});
+  get: function() {
+    return _connections.length
+  }
+})
 
 
 /**
@@ -141,10 +141,10 @@ Object.defineProperty( koaSocket, 'numConnections', {
  * @private
  */
 function addConnection( socket ) {
-    _connections.push({
-        id: socket.id,
-        socket: socket
-    });
+  _connections.push({
+    id: socket.id,
+    socket: socket
+  })
 }
 
 
@@ -152,15 +152,15 @@ function addConnection( socket ) {
  * Removes a connection from the list
  */
 function removeConnection( id ) {
-    var i = _connections.length - 1;
-    while( i > 0 ) {
-        if ( _connections[ i ].id === id ) {
-            break;
-        }
-        i--;
+  var i = _connections.length - 1
+  while( i > 0 ) {
+    if ( _connections[ i ].id === id ) {
+      break
     }
+    i--
+  }
 
-    _connections.splice( i, 1 );
+  _connections.splice( i, 1 )
 }
 
 
@@ -171,21 +171,21 @@ function removeConnection( id ) {
  * @param socket {socket connection}
  */
 function onConnect( socket ) {
-    console.log( 'Socket connected', socket.id );
-    socket.on( 'disconnect', onDisconnect );
-    if ( koaSocket.onConnect ) {
-        koaSocket.onConnect( socket );
-    }
-    koaSocket.attach( socket );
+  console.log( 'Socket connected', socket.id )
+  socket.on( 'disconnect', onDisconnect )
+  if ( koaSocket.onConnect ) {
+    koaSocket.onConnect( socket )
+  }
+  koaSocket.attach( socket )
 }
 
 /**
  * Fired when a socket disconnects from the server,
  */
 function onDisconnect() {
-    console.log( 'Socket disconnected', this.id );
-    if ( koaSocket.onDisconnect ) {
-        koaSocket.onDisconnect( this );
-    }
-    removeConnection( this.id );
+  console.log( 'Socket disconnected', this.id )
+  if ( koaSocket.onDisconnect ) {
+    koaSocket.onDisconnect( this )
+  }
+  removeConnection( this.id )
 }
