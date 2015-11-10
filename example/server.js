@@ -28,6 +28,13 @@ app.use( ctx => {
  */
 socket.use( co.wrap( function *( ctx, next ) {
   console.log( 'Socket middleware' )
+  const start = new Date
+  yield next()
+  const ms = new Date - start
+  console.log( `WS ${ ms }ms` )
+}))
+socket.use( co.wrap( function *( ctx, next ) {
+  ctx.teststring = 'test'
   yield next()
 }))
 
@@ -39,7 +46,8 @@ socket.on( 'connection', socket => {
 })
 socket.on( 'data', ( ctx, packet ) => {
   console.log( 'data event', packet )
-  console.log( 'ctx', ctx )
+  console.log( 'ctx:', ctx.event, ctx.data, ctx.socket.id )
+  console.log( 'ctx.teststring:', ctx.teststring )
 })
 
 const PORT = 3000

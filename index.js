@@ -2,13 +2,12 @@
  * Koa-socket
  * ---
  *
- * © 2014 Matt Styles @personalurban
+ * © 2015 Matt Styles @personalurban
  */
 
-var http = require( 'http' ),
-  socketIO = require( 'socket.io' ),
-
-  Socket = require( './lib/socket' )
+var http = require( 'http' )
+var socketIO = require( 'socket.io' )
+var Socket = require( './lib/socket' )
 
 
 /**
@@ -171,7 +170,7 @@ function removeConnection( id ) {
  * @param socket {socket connection}
  */
 function onConnect( socket ) {
-  console.log( 'Socket connected', socket.id )
+  //console.log( 'Socket connected', socket.id )
   socket.on( 'disconnect', onDisconnect )
   if ( koaSocket.onConnect ) {
     koaSocket.onConnect( socket )
@@ -183,7 +182,7 @@ function onConnect( socket ) {
  * Fired when a socket disconnects from the server,
  */
 function onDisconnect() {
-  console.log( 'Socket disconnected', this.id )
+  //console.log( 'Socket disconnected', this.id )
   if ( koaSocket.onDisconnect ) {
     koaSocket.onDisconnect( this )
   }
