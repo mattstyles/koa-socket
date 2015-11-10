@@ -37,8 +37,9 @@ socket.use( co.wrap( function *( ctx, next ) {
 socket.on( 'connection', socket => {
   console.log( 'Join event', socket.id )
 })
-socket.on( 'data', packet => {
+socket.on( 'data', ( ctx, packet ) => {
   console.log( 'data event', packet )
+  console.log( 'ctx', ctx )
 })
 
 const PORT = 3000
