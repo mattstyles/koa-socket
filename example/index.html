@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Koa-Socket Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-family: -apple-system, '.SFNSDisplay-Regular', 'Helvetica Neue', 'Arial', sans-serif;
+      color: #32322C;
+    }
+
+    button {
+      border: none;
+      border-radius: 4px;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+      padding: .3em 3em;
+      background: #13C4A3;
+      transition: all .177s linear;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #36F1CD;
+      text-shadow: 0px 1px 2px rgba( 0, 0, 0, .3 );
+    }
+  </style>
+</head>
+<body>
+  <button class="js-btn">Send</button>
+  <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+  <script>
+    var btn = document.querySelector( '.js-btn' )
+    var socket = io()
+    btn.addEventListener( 'click', event => {
+      socket.emit( 'data', {
+        foo: 'foo'
+      })
+    })
+  </script>
+</body>
+</html>
