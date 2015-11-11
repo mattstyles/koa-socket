@@ -1,3 +1,7 @@
+##
+
+* _add_ broadcast to all connections
+
 ## 2.0.0 - 11.11.2015
 
 * _add_ koa v2 compatibility
