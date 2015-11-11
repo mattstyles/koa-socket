@@ -88,4 +88,4 @@ In the above example the event handler will get executed after the middleware an
 
 ## License
 
-ISC
+MIT

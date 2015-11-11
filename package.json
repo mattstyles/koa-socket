@@ -4,15 +4,16 @@
   "description": "Koa meets socket.io connected socket",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "example": "node example/server"
   },
   "keywords": [
     "koa",
     "socket.io",
     "web sockets"
   ],
-  "author": "mattstyles @personalurban",
-  "license": "ISC",
+  "author": "Matt Styles",
+  "license": "MIT",
   "dependencies": {
     "co": "^4",
     "koa-compose": "^3",
