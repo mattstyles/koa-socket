@@ -101,7 +101,7 @@ var ctx = {
 }
 ```
 
-The context passed to each socket middleware and handler begins the chain with the event the triggered the response, the data sent with that event and the raw socket connection that is handling the event.
+The context passed to each socket middleware and handler begins the chain with the event that triggered the response, the data sent with that event and the raw socket connection that is handling the event.
 
 As the context is passed to each function in the response chain it is fair game for mutation at any point along that chain, it is up to you to decide whether this is an anti-pattern or not. There was much discussion around this topic for koa v2.
 

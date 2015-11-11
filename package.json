@@ -1,6 +1,6 @@
 {
   "name": "koa-socket",
-  "version": "0.4.0",
+  "version": "2.0.0",
   "description": "Koa meets socket.io connected socket",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,8 @@
   "keywords": [
     "koa",
     "socket.io",
-    "web sockets"
+    "web sockets",
+    "websocket"
   ],
   "author": "Matt Styles",
   "license": "MIT",
