@@ -48,19 +48,13 @@ socket.use( co.wrap( function *( ctx, next ) {
  */
 socket.on( 'connection', sock => {
   console.log( 'Join event', sock.id )
-  sock.broadcast.emit( 'connections', {
-    numConnections: socket.numConnections
-  })
-  sock.emit( 'connections', {
+  socket.broadcast( 'connections', {
     numConnections: socket.numConnections
   })
 })
 socket.on( 'disconnect', sock => {
   console.log( 'leave event', sock.id )
-  sock.broadcast.emit( 'connections', {
-    numConnections: socket.numConnections
-  })
-  sock.emit( 'connections', {
+  socket.broadcast( 'connections', {
     numConnections: socket.numConnections
   })
 })
@@ -68,6 +62,9 @@ socket.on( 'data', ( ctx, packet ) => {
   console.log( 'data event', packet )
   console.log( 'ctx:', ctx.event, ctx.data, ctx.socket.id )
   console.log( 'ctx.teststring:', ctx.teststring )
+  ctx.socket.emit( 'response', {
+    message: 'response from server'
+  })
 })
 socket.on( 'numConnections', packet => {
   console.log( `Number of connections: ${ socket.numConnections }` )

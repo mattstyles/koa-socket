@@ -49,7 +49,6 @@ koaSocket.onDisconnect = null
 
 /**
  * Takes a koa instance (or any object that implements an http handler) and attaches socket.io to it
- *
  * @param koa {Koa || http handler} koa instance or object that implements handler as callback function
  */
 koaSocket.start = function( koa ) {
@@ -67,7 +66,6 @@ koaSocket.start = function( koa ) {
 
 /**
  * Add a function to the stack of middleware
- *
  * @param fn {function}
  */
 koaSocket.use = function( fn ) {
@@ -78,7 +76,6 @@ koaSocket.use = function( fn ) {
 
 /**
  * Getter for the list of connected sockets
- *
  * @returns {array}
  */
 koaSocket.getConnections = function() {
@@ -88,7 +85,6 @@ koaSocket.getConnections = function() {
 
 /**
  * Stores a listener, ready to attach.
- *
  * @param event {String} name of event
  * @param handler {Function} the callback to fire on event
  */
@@ -112,7 +108,6 @@ koaSocket.on = function( event, handler ) {
 
 /**
  * Binds listeners to the socket connection
- *
  * @param socket - socket.io socket connection
  */
 koaSocket.attach = function( socket ) {
@@ -132,10 +127,20 @@ Object.defineProperty( koaSocket, 'numConnections', {
   }
 })
 
+/**
+ * Broadcast a message to every connected client
+ * @param event {String} name of event
+ * @param data {} the data to send with the event
+ */
+koaSocket.broadcast = function( event, data ) {
+  _connections
+    .map( connection => connection.socket )
+    .forEach( socket => socket.emit( event, data ) )
+}
+
 
 /**
  * Adds a new connection to the list
- *
  * @param socket {Socket instance}
  * @private
  */
@@ -149,6 +154,7 @@ function addConnection( socket ) {
 
 /**
  * Removes a connection from the list
+ * @param id <String>
  */
 function removeConnection( id ) {
   var i = _connections.length - 1
@@ -166,7 +172,6 @@ function removeConnection( id ) {
 /**
  * Fired when a socket connects to the server.
  * Attaches the socket to koaSocket and sets up a disconnect event.
- *
  * @param socket {socket connection}
  */
 function onConnect( socket ) {
@@ -179,7 +184,7 @@ function onConnect( socket ) {
 }
 
 /**
- * Fired when a socket disconnects from the server,
+ * Fired when a socket disconnects from the server
  */
 function onDisconnect() {
   //console.log( 'Socket disconnected', this.id )

@@ -69,6 +69,10 @@
       console.log( 'connected', event )
       connections.innerHTML = event.numConnections
     })
+
+    socket.on( 'response', function( event ) {
+      console.log( 'response:', event.message )
+    })
   </script>
 </body>
 </html>
