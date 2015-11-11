@@ -6,8 +6,8 @@ const Koa = require( 'koa' )
 const socket = require( '../' )
 const co = require( 'co' )
 
-
 const app = new Koa()
+
 
 /**
  * Koa Middlewares
@@ -18,6 +18,11 @@ app.use( co.wrap( function *( ctx, next ) {
   const ms = new Date - start
   console.log( `${ ctx.method } ${ ctx.url } - ${ ms }ms` )
 }))
+
+
+/**
+ * App handlers
+ */
 app.use( ctx => {
   ctx.type = 'text/html'
   ctx.body = fs.createReadStream( path.join( __dirname, 'index.html' ) )
@@ -41,13 +46,31 @@ socket.use( co.wrap( function *( ctx, next ) {
 /**
  * Socket handlers
  */
-socket.on( 'connection', socket => {
-  console.log( 'Join event', socket.id )
+socket.on( 'connection', sock => {
+  console.log( 'Join event', sock.id )
+  sock.broadcast.emit( 'connections', {
+    numConnections: socket.numConnections
+  })
+  sock.emit( 'connections', {
+    numConnections: socket.numConnections
+  })
+})
+socket.on( 'disconnect', sock => {
+  console.log( 'leave event', sock.id )
+  sock.broadcast.emit( 'connections', {
+    numConnections: socket.numConnections
+  })
+  sock.emit( 'connections', {
+    numConnections: socket.numConnections
+  })
 })
 socket.on( 'data', ( ctx, packet ) => {
   console.log( 'data event', packet )
   console.log( 'ctx:', ctx.event, ctx.data, ctx.socket.id )
   console.log( 'ctx.teststring:', ctx.teststring )
+})
+socket.on( 'numConnections', packet => {
+  console.log( `Number of connections: ${ socket.numConnections }` )
 })
 
 const PORT = 3000

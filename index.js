@@ -171,11 +171,11 @@ function removeConnection( id ) {
  */
 function onConnect( socket ) {
   //console.log( 'Socket connected', socket.id )
+  koaSocket.attach( socket )
   socket.on( 'disconnect', onDisconnect )
   if ( koaSocket.onConnect ) {
     koaSocket.onConnect( socket )
   }
-  koaSocket.attach( socket )
 }
 
 /**
@@ -183,8 +183,8 @@ function onConnect( socket ) {
  */
 function onDisconnect() {
   //console.log( 'Socket disconnected', this.id )
+  removeConnection( this.id )
   if ( koaSocket.onDisconnect ) {
     koaSocket.onDisconnect( this )
   }
-  removeConnection( this.id )
 }
