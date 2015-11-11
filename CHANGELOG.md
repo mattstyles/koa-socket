@@ -1,3 +1,14 @@
+## 2.0.0 - 11.11.2015
+
+* _add_ koa v2 compatibility
+* _update_ middleware composition
+
+### Breaking changes
+
+* Middleware should now be passed `co` wrapped generators, similar to one method of using koa.
+* Context is shifted from `this` to the `ctx` parameter, which is passed through middleware to event listeners and is mutable.
+
+
 ## 0.4.0 - 30.04.2015
 
 * _add_ - event to data packet - *[git-jiby-me](https://github.com/git-jiby-me)*
