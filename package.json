@@ -4,11 +4,12 @@
   "description": "Koa meets socket.io connected socket",
   "main": "index.js",
   "scripts": {
-    "test": "node spec/index.js spec/*.test.js",
+    "test": "node spec/index.js spec/connection.test.js",
     "example": "node example/server"
   },
   "keywords": [
     "koa",
+    "koa v2",
     "socket.io",
     "web sockets",
     "websocket"
@@ -25,6 +26,7 @@
     "babel-preset-urban": "^0.2.0",
     "koa": "^2.0.0-alpha.3",
     "minimist": "^1.2.0",
+    "socket.io-client": "^1.3.7",
     "tape": "^4.2.2"
   }
 }
