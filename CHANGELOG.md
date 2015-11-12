@@ -1,6 +1,8 @@
 ##
 
 * _add_ broadcast to all connections
+* _add_ test sling
+* _update_ throw error on failure to attach socket to koa
 
 ## 2.0.0 - 11.11.2015
 
