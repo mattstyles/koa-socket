@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.1.4",
+    "babel-preset-urban": "^0.2.0",
     "koa": "^2.0.0-alpha.3",
     "minimist": "^1.2.0",
     "tape": "^4.2.2"

@@ -53,8 +53,7 @@ koaSocket.onDisconnect = null
  */
 koaSocket.start = function( koa ) {
   if ( koa.server || koa.io ) {
-    console.error( 'Sockets failed to initialise\nInstance may already exist' )
-    return
+    throw new error( 'Sockets failed to initialise::Instance may already exist' )
   }
 
   koa.server = http.createServer( koa.callback() )
@@ -155,6 +154,7 @@ function addConnection( socket ) {
 /**
  * Removes a connection from the list
  * @param id <String>
+ * @private
  */
 function removeConnection( id ) {
   var i = _connections.length - 1
@@ -173,6 +173,7 @@ function removeConnection( id ) {
  * Fired when a socket connects to the server.
  * Attaches the socket to koaSocket and sets up a disconnect event.
  * @param socket {socket connection}
+ * @private
  */
 function onConnect( socket ) {
   //console.log( 'Socket connected', socket.id )
@@ -185,6 +186,7 @@ function onConnect( socket ) {
 
 /**
  * Fired when a socket disconnects from the server
+ * @private
  */
 function onDisconnect() {
   //console.log( 'Socket disconnected', this.id )
