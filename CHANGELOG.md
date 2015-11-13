@@ -13,6 +13,7 @@
 
 * koaSocket exposes an IO class, which must be instantiated. This is the same as instantiating a koa v2 app.
 * `start` is renamed to `attach`. `Start` is misleading, more so than `attach` which at least does attach socket.io to a koa-callback-powered listener.
+* `connection` and `disconnect` handlers are removed, although they can still be accessed via socket.io directly, which is exposed on the app after calling attach.
 
 
 ## 2.0.0 - 11.11.2015

@@ -9,6 +9,8 @@ const co = require( 'co' )
 const app = new Koa()
 const socket = new IO()
 
+socket.attach( app )
+
 /**
  * Koa Middlewares
  */
@@ -46,16 +48,17 @@ socket.use( co.wrap( function *( ctx, next ) {
 /**
  * Socket handlers
  */
-socket.on( 'connection', sock => {
+app.io.on( 'connection', sock => {
   console.log( 'Join event', sock.id )
   socket.broadcast( 'connections', {
-    numConnections: socket.numConnections
+    numConnections: socket.connections.size
   })
 })
+
 socket.on( 'disconnect', sock => {
   console.log( 'leave event', sock.id )
   socket.broadcast( 'connections', {
-    numConnections: socket.numConnections
+    numConnections: socket.connections.size
   })
 })
 socket.on( 'data', ( ctx, data ) => {
@@ -67,10 +70,10 @@ socket.on( 'data', ( ctx, data ) => {
   })
 })
 socket.on( 'numConnections', packet => {
-  console.log( `Number of connections: ${ socket.numConnections }` )
+  console.log( `Number of connections: ${ socket.connections.size }` )
 })
 
 const PORT = 3000
-console.log( `Listening on ${ PORT }` )
-socket.attach( app )
-app.server.listen( 3000 )
+app.server.listen( 3000, () => {
+  console.log( `Listening on ${ PORT }` )
+} )
