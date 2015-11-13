@@ -9,7 +9,7 @@ var http = require( 'http' )
 var socketIO = require( 'socket.io' )
 var Socket = require( './lib/socket' )
 
-import co from 'co'
+// import Socket from './socket'
 
 /**
  * Listeners ready to attach to a socket instance
@@ -33,7 +33,8 @@ var _middleware = []
  * Expose object to manage attaching listeners to connections
  */
 var koaSocket = module.exports = {}
-
+// var koaSocket = {}
+// export default koaSocket
 
 /**
  * Connection callback.

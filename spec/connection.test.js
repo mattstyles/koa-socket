@@ -2,7 +2,7 @@
 import tape from 'tape'
 import Koa from 'koa'
 import ioc from 'socket.io-client'
-import socket from '../lib'
+import socket from '../'
 
 
 // Attaches socket.io to a server
