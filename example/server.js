@@ -3,11 +3,11 @@ const fs = require( 'fs' )
 const path = require( 'path' )
 
 const Koa = require( 'koa' )
-const socket = require( '../' )
+const IO = require( '../' )
 const co = require( 'co' )
 
 const app = new Koa()
-
+const socket = new IO()
 
 /**
  * Koa Middlewares
@@ -72,5 +72,5 @@ socket.on( 'numConnections', packet => {
 
 const PORT = 3000
 console.log( `Listening on ${ PORT }` )
-socket.start( app )
+socket.attach( app )
 app.server.listen( 3000 )
