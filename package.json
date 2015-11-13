@@ -17,13 +17,13 @@
   "author": "Matt Styles",
   "license": "MIT",
   "dependencies": {
-    "co": "^4",
     "koa-compose": "^3",
     "socket.io": "^1.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.1.4",
     "babel-preset-urban": "^0.2.0",
+    "co": "^4",
     "koa": "^2.0.0-alpha.3",
     "minimist": "^1.2.0",
     "socket.io-client": "^1.3.7",
