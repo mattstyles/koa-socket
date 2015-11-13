@@ -1,7 +1,7 @@
 
 import tape from 'tape'
 import Koa from 'koa'
-import socket from '../'
+import socket from '../lib'
 
 tape( 'socket.start alters the app to include socket.io', t => {
   t.plan( 2 )

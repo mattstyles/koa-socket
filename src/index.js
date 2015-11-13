@@ -9,6 +9,7 @@ var http = require( 'http' )
 var socketIO = require( 'socket.io' )
 var Socket = require( './lib/socket' )
 
+import co from 'co'
 
 /**
  * Listeners ready to attach to a socket instance

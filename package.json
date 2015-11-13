@@ -4,7 +4,9 @@
   "description": "Koa meets socket.io connected socket",
   "main": "index.js",
   "scripts": {
+    "pretest": "npm run build",
     "test": "node spec/index.js spec/connection.test.js",
+    "build": "babel src --out-dir lib",
     "example": "node example/server"
   },
   "keywords": [
@@ -21,7 +23,10 @@
     "socket.io": "^1.1.0"
   },
   "devDependencies": {
+    "babel": "^6.1.18",
+    "babel-cli": "^6.1.18",
     "babel-core": "^6.1.4",
+    "babel-preset-es2015-node": "^5.0.1",
     "babel-preset-urban": "^0.2.0",
     "co": "^4",
     "koa": "^2.0.0-alpha.3",

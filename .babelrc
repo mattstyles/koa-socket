@@ -1,6 +1,5 @@
 {
   "presets": [
-    "urban"
+    "es2015-node"
   ]
-
 }
