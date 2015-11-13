@@ -58,8 +58,8 @@ socket.on( 'disconnect', sock => {
     numConnections: socket.numConnections
   })
 })
-socket.on( 'data', ( ctx, packet ) => {
-  console.log( 'data event', packet )
+socket.on( 'data', ( ctx, data ) => {
+  console.log( 'data event', data )
   console.log( 'ctx:', ctx.event, ctx.data, ctx.socket.id )
   console.log( 'ctx.teststring:', ctx.teststring )
   ctx.socket.emit( 'response', {
