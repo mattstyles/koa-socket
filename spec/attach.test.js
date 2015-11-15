@@ -1,7 +1,9 @@
 
-var tape = require( 'tape' )
-var Koa = require( 'koa' )
-var Socket = require( '../' )
+'use strict';
+
+const tape = require( 'tape' )
+const Koa = require( 'koa' )
+const Socket = require( '../' )
 
 tape( 'socket.start alters the app to include socket.io', t => {
   t.plan( 2 )

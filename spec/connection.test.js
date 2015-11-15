@@ -1,9 +1,10 @@
 
-import tape from 'tape'
-import Koa from 'koa'
-import ioc from 'socket.io-client'
-import socket from '../'
+'use strict';
 
+const tape = require( 'tape' )
+const ioc = require( 'socket.io-client' )
+const Koa = require( 'koa' )
+const Socket = require( '../' )
 
 // Attaches socket.io to a server
 function connect( srv, opts ) {
@@ -21,17 +22,19 @@ function connect( srv, opts ) {
   return client
 }
 
-function server() {
+function application( sock ) {
   const app = new Koa()
-  socket.start( app )
-  return app.server
+  const socket = sock || new Socket()
+  socket.attach( app )
+  return app
 }
 
 
 tape( 'Client connects to server', t => {
   t.plan( 1 )
 
-  const client = connect( server() )
+  const socket = new Socket()
+  const client = connect( application( socket ).server )
 
   client.on( 'connect', () => {
     client.disconnect()
@@ -41,44 +44,48 @@ tape( 'Client connects to server', t => {
   })
 })
 
-tape.skip( 'Number of connections should reflect the number of client connections', t => {
+tape( 'Number of connections should reflect the number of client connections', t => {
   t.plan( 3 )
 
-  t.equal( socket.numConnections, 0, 'socket connections should start at 0' )
+  const socket = new Socket()
+  const app = application( socket )
+  const client = connect( app.server )
 
-  const client = connect( server() )
+  t.equal( socket.connections.size, 0, 'socket connections should start at 0' )
 
   function onConnection( sock ) {
-    t.equal( socket.numConnections, 1, 'one connections should be one connection' )
+    t.equal( socket.connections.size, 1, 'one connections should be one connection' )
     sock.disconnect()
   }
 
   function onDisconnect( sock ) {
-    t.equal( socket.numConnections, 0, 'after a disconnect there should be 0 again' )
+    t.equal( socket.connections.size, 0, 'after a disconnect there should be 0 again' )
   }
 
-  socket.on( 'connection', onConnection )
+  app.io.on( 'connection', onConnection )
   socket.on( 'disconnect', onDisconnect )
 
-  // @TODO not being able to instantiate multiple socket instances is a pain
-  socket.off( 'connection', onConnection )
-  socket.off( 'disconnect', onDisconnect )
+  // @TODO tidy up?
+  // socket.off( 'connection', onConnection )
+  // socket.off( 'disconnect', onDisconnect )
 })
 
 /**
- * @TODO cant take off the listeners added in the previous test!
+ * @TODO
  */
 tape.skip( 'Number of connections should reflect multiple connectees', t => {
   t.plan( 2 )
-  t.equal( socket.numConnections, 0, 'socket connections should start at 0' )
 
-  const srv = server()
+  const socket = new Socket()
+  const app = application( socket )
 
-  const c1 = connect( srv )
-  const c2 = connect( srv )
+  t.equal( socket.connections.size, 0, 'socket connections should start at 0' )
+
+  const c1 = connect( app.server )
+  const c2 = connect( app.server )
 
   // Give them 500ms to connect, that'll be more than enough and makes life simpler
   setTimeout( () => {
-    t.equal( socket.numConnections, 2, '2 connectors should mean 2 number of connections' )
-  })
+    t.equal( socket.connections.size, 2, '2 connectors should mean 2 number of connections' )
+  }, 500 )
 })
