@@ -1,6 +1,4 @@
 
-require( 'babel-core/register' )
-
 const path = require( 'path' )
 const minimist = require( 'minimist' )
 
