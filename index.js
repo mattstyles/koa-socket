@@ -152,6 +152,7 @@ module.exports = class IO {
    * Creates a new Socket instance and adds that to the stack and sets up the
    * disconnect event
    * @param sock <Socket.io Socket>
+   * @private
    */
   onConnection( sock ) {
     // let instance = new Socket( sock, this.listeners, this.middleware )
@@ -178,6 +179,7 @@ module.exports = class IO {
    * Fired when the socket disconnects, simply reflects stack in the connections
    * stack
    * @param sock <Socket.io Socket>
+   * @private
    */
   onDisconnect( sock ) {
     this.connections.delete( sock.id )
@@ -185,6 +187,7 @@ module.exports = class IO {
 
   /**
    * Updates all existing connections with current listeners and middleware
+   * @private
    */
   updateConnections() {
     this.connections.forEach( connection => {

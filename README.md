@@ -122,11 +122,73 @@ io.use( co.wrap( function *( ctx, next ) {
   console.log( ctx.process )
 }))
 
-io.on( 'event', ( ctx, packet ) => {
+io.on( 'event', ( ctx, data ) => {
   // ctx is passed all the way through to the end point
   console.log( ctx.process )
 })
 ```
+
+## API
+
+### .attach( `Koa app` )
+
+Attaches to a koa application
+
+```js
+io.attach( app )
+app.server.listen( process.env.PORT )
+```
+
+### .use( `Function callback` )
+
+Applies middleware to the stack.
+
+Middleware are executed each time an event is heard and before the callback is triggered for events.
+
+Middleware with generators should use `co.wrap`.
+
+Middleware functions are called with `ctx` and `next`. The context is passed through each middleware and out to the event listener callback. `next` allows the middleware chain to be traversed—use of generators provides and upstream and a downstream allowing for an expressive middleware stack.
+
+
+```js
+io.use( co.wrap( function *( ctx, next ) {
+  console.log( 'Upstream' )
+  yield next()
+  console.log( 'Downstream' )
+}))
+```
+
+### .on( `String event`, `Function callback` )
+
+Attaches a callback to an event.
+
+The callback is fired after any middleware that are attached to the instance and is called with the `ctx` object and the `data` that triggered the event. The `data` can also be found on the `ctx`, the only potential difference is that `data` is the raw `data` emitted with the event trigger whilst `ctx.data` could have been mutated within the middleware stack.
+
+```js
+io.on( 'join', ( ctx, data ) => {
+  console.log( data )
+  console.log( ctx.data, data )
+})
+```
+
+### .off( `String event`, `Function callback` )
+
+Removes a callback from an event.
+
+If the `event` is omitted then it will remove all listeners from the instance.
+
+If the `callback` is omitted then all callbacks for the supplied event will be removed.
+
+```js
+io.off( 'join', onJoin )
+io.off( 'join' )
+io.off()
+```
+
+### .broadcast( `String event`, `data` )
+
+Sends a message to all connections.
+
 
 ## Running tests
 
