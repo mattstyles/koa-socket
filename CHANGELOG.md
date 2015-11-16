@@ -1,5 +1,5 @@
 
-##
+## 3.1.0
 
 * _add_ allow runtime updates to middleware and listeners
 * _update_ test coverage
