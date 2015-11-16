@@ -48,15 +48,15 @@ socket.use( co.wrap( function *( ctx, next ) {
 /**
  * Socket handlers
  */
-app.io.on( 'connection', sock => {
-  console.log( 'Join event', sock.id )
+socket.on( 'connection', ctx => {
+  console.log( 'Join event', ctx.socket.id )
   socket.broadcast( 'connections', {
     numConnections: socket.connections.size
   })
 })
 
-socket.on( 'disconnect', sock => {
-  console.log( 'leave event', sock.id )
+socket.on( 'disconnect', ctx => {
+  console.log( 'leave event', ctx.socket.id )
   socket.broadcast( 'connections', {
     numConnections: socket.connections.size
   })

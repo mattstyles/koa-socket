@@ -49,10 +49,21 @@ module.exports = class IO {
   }
 
   onConnection( sock ) {
-    this.connections.set( sock.id, new Socket( sock, this.listeners, this.middleware ) )
+    let instance = new Socket( sock, this.listeners, this.middleware )
+    this.connections.set( sock.id, instance )
     sock.on( 'disconnect', () => {
       this.onDisconnect( sock )
     })
+
+    // Trigger the connection event if attached to the socket listener map
+    if ( this.listeners.has( 'connection' ) ) {
+      this.listeners.get( 'connection' )({
+        event: 'connection',
+        data: instance.id,
+        socket: instance
+      }, instance.id )
+    }
+
     return sock
   }
 
