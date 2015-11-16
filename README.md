@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/mattstyles/koa-socket.svg?branch=composer)](https://travis-ci.org/mattstyles/koa-socket)
+[![Build Status](https://travis-ci.org/mattstyles/koa-socket.svg?branch=composer)](https://travis-ci.org/mattstyles/koa-socket) [![npm version](https://badge.fury.io/js/koa-socket.svg)](https://badge.fury.io/js/koa-socket)
 
 # Koa-socket
 
