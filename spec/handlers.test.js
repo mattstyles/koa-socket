@@ -131,6 +131,73 @@ tape( 'A handler can be removed from a multiple handler event', t => {
   }, 500 )
 })
 
+tape( 'A specific handler can be removed from an event - front', t => {
+  t.plan( 2 )
+
+  const io = new IO()
+  const app = application( io )
+  const client = connection( app.server )
+
+  var count1 = 0
+  var count2 = 0
+
+  function add() {
+    count1++
+  }
+  function plus() {
+    count2++
+  }
+
+  io.on( 'req', add )
+  io.on( 'req', plus )
+  client.emit( 'req' )
+
+  setTimeout( () => {
+    t.ok( count1 === 1 && count2 === 1, 'Both handlers should have been called' )
+    io.off( 'req', add )
+    client.emit( 'req' )
+
+    setTimeout( () => {
+      t.ok( count1 === 1 && count2 === 2, 'A specific handler has been removed from the start of the list' )
+      client.disconnect()
+    }, 500 )
+  }, 500 )
+})
+
+tape( 'A specific handler can be removed from an event - last', t => {
+  t.plan( 2 )
+
+  const io = new IO()
+  const app = application( io )
+  const client = connection( app.server )
+
+  var count1 = 0
+  var count2 = 0
+
+  function add() {
+    count1++
+  }
+  function plus() {
+    count2++
+  }
+
+  io.on( 'req', add )
+  io.on( 'req', plus )
+  client.emit( 'req' )
+
+  setTimeout( () => {
+    t.ok( count1 === 1 && count2 === 1, 'Both handlers should have been called' )
+    io.off( 'req', plus )
+    client.emit( 'req' )
+
+    setTimeout( () => {
+      t.ok( count1 === 2 && count2 === 1, 'A specific handler has been removed from the end of the list' )
+      client.disconnect()
+    }, 500 )
+  }, 500 )
+})
+
+
 tape( 'All handlers can be removed from an event', t => {
   t.plan( 2 )
 
