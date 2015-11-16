@@ -1,3 +1,6 @@
+
+[![Build Status](https://travis-ci.org/mattstyles/koa-socket.svg?branch=composer)](https://travis-ci.org/mattstyles/koa-socket)
+
 # Koa-socket
 
 > Sugar for connecting socket.io to a koa instance
