@@ -72,6 +72,131 @@ tape( 'Multiple handlers can be connected to an event', t => {
   client.emit( 'end' )
 })
 
+tape( 'A handler can be removed', t => {
+  t.plan( 1 )
+
+  const io = new IO()
+  const app = application( io )
+  const client = connection( app.server )
+
+  var count = 0
+
+  function add() {
+    count++
+  }
+
+  io.on( 'req', add )
+  client.emit( 'req' )
+
+  setTimeout( () => {
+    io.off( 'req', add )
+    client.emit( 'req' )
+
+    setTimeout( () => {
+      t.equal( count, 1, 'Add function is called only once' )
+      client.disconnect()
+    }, 500 )
+  }, 500 )
+})
+
+tape( 'A handler can be removed from a multiple handler event', t => {
+  t.plan( 2 )
+
+  const io = new IO()
+  const app = application( io )
+  const client = connection( app.server )
+
+  var count = 0
+
+  function add() {
+    count++
+  }
+  function plus() {
+    count++
+  }
+
+  io.on( 'req', add )
+  io.on( 'req', plus )
+  client.emit( 'req' )
+
+  setTimeout( () => {
+    t.equal( count, 2, 'Both handlers should have been called' )
+    io.off( 'req', add )
+    client.emit( 'req' )
+
+    setTimeout( () => {
+      t.equal( count, 3, 'After removal only one handler will have been triggered' )
+      client.disconnect()
+    }, 500 )
+  }, 500 )
+})
+
+tape( 'All handlers can be removed from an event', t => {
+  t.plan( 2 )
+
+  const io = new IO()
+  const app = application( io )
+  const client = connection( app.server )
+
+  var count = 0
+
+    function add() {
+      count++
+    }
+    function plus() {
+      count++
+    }
+
+    io.on( 'req', add )
+    io.on( 'req', plus )
+    client.emit( 'req' )
+
+    setTimeout( () => {
+      t.equal( count, 2, 'Both handlers should have been called' )
+      io.off( 'req' )
+      client.emit( 'req' )
+
+      setTimeout( () => {
+        t.equal( count, 2, 'All handlers have been removed from the event' )
+        client.disconnect()
+      }, 500 )
+    }, 500 )
+})
+
+tape( 'All handlers can be removed from a socket instance', t => {
+  t.plan( 2 )
+
+  const io = new IO()
+  const app = application( io )
+  const client = connection( app.server )
+
+  var count = 0
+
+    function add() {
+      count++
+    }
+    function plus() {
+      count++
+    }
+
+    io.on( 'req1', add )
+    io.on( 'req2', plus )
+    client.emit( 'req1' )
+    client.emit( 'req2' )
+
+    setTimeout( () => {
+      t.equal( count, 2, 'Both handlers should have been called' )
+      io.off()
+      client.emit( 'req1' )
+      client.emit( 'req2' )
+
+      setTimeout( () => {
+        t.equal( count, 2, 'All handlers have been removed from the event' )
+        client.disconnect()
+      }, 500 )
+    }, 500 )
+})
+
 tape( 'Middleware is run before listeners', t => {
   t.plan( 1 )
 
