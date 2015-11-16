@@ -98,7 +98,8 @@ module.exports = class IO {
       return this
     }
 
-    this.listeners.set( event, listeners.push( handler ) )
+    listeners.push( handler )
+    this.listeners.set( event, listeners )
     this.updateConnections()
     return this
   }
