@@ -1,6 +1,5 @@
 
-
-###
+### 3.0.0 - 16.11.2015
 
 * _update_ use class notation
 * _update_ performance improvements by composing middleware in the socket constructor rather than every event
