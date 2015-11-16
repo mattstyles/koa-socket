@@ -71,3 +71,65 @@ tape( 'Multiple handlers can be connected to an event', t => {
   client.emit( 'req' )
   client.emit( 'end' )
 })
+
+tape( 'Middleware is run before listeners', t => {
+  t.plan( 1 )
+
+  const io = new IO()
+  const app = application( io )
+  const client = connection( app.server )
+
+  var count = 0
+
+  io.use( co.wrap( function *( ctx, next ) {
+    count++
+  }))
+  io.on( 'req', ctx => {
+    t.equal( count, 1, 'Middleware runs before listeners' )
+    client.disconnect()
+  })
+
+  client.emit( 'req' )
+})
+
+tape( 'Middleware can manipulate the context', t => {
+  t.plan( 1 )
+
+  const io = new IO()
+  const app = application( io )
+  const client = connection( app.server )
+
+  io.use( co.wrap( function *( ctx, next ) {
+    ctx.foo = true
+  }))
+  io.on( 'req', ctx => {
+    t.ok( ctx.foo, 'Context can be manipulated' )
+    client.disconnect()
+  })
+
+  client.emit( 'req' )
+})
+
+tape( 'Middleware can be traversed', t => {
+  t.plan( 2 )
+
+  const io = new IO()
+  const app = application( io )
+  const client = connection( app.server )
+
+  io.use( co.wrap( function *( ctx, next ) {
+    ctx.count = 0
+    yield next()
+    t.equal( ctx.count, 1, 'Downstream middleware manipulated the context' )
+    ctx.count++
+  }))
+  io.use( co.wrap( function *( ctx, next ) {
+    ctx.count++
+  }))
+  io.on( 'req', ctx => {
+    t.equal( ctx.count, 2, 'Middleware upstream and downstream have executed' )
+    client.disconnect()
+  })
+
+  client.emit( 'req' )
+})
