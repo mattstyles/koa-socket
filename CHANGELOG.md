@@ -12,7 +12,7 @@
 
 * koaSocket exposes an IO class, which must be instantiated. This is the same as instantiating a koa v2 app.
 * `start` is renamed to `attach`. `Start` is misleading, more so than `attach` which at least does attach socket.io to a koa-callback-powered listener.
-
+* The context packet returned with each event now contains a Socket instance, rather than just the raw socket.io socket
 
 
 ## 2.0.0 - 11.11.2015
