@@ -32,10 +32,6 @@ function application( sock ) {
 }
 
 function forkConnection( srv ) {
-  // return fork( 'node', [
-  //   __dirname + '/helpers/connect',
-  //   '--port', srv.address().port
-  // ])
   return fork( __dirname + '/helpers/connect', [
     '--port', srv.address().port
   ])
@@ -65,26 +61,15 @@ tape( 'Number of connections should update when a client connects', t => {
 
   t.equal( socket.connections.size, 0, 'socket connections should start at 0' )
 
-  function onConnection( sock ) {
+  app.io.on( 'connection', sock => {
     t.equal( socket.connections.size, 1, 'one connections should be one connection' )
     sock.disconnect()
-  }
-
-  function onDisconnect( sock ) {
+  })
+  socket.on( 'disconnect', sock => {
     t.equal( socket.connections.size, 0, 'after a disconnect there should be 0 again' )
-  }
-
-  app.io.on( 'connection', onConnection )
-  socket.on( 'disconnect', onDisconnect )
-
-  // @TODO tidy up?
-  // socket.off( 'connection', onConnection )
-  // socket.off( 'disconnect', onDisconnect )
+  })
 })
 
-/**
- * @TODO
- */
 tape( 'Number of connections should reflect multiple connectees', t => {
   t.plan( 2 )
 
@@ -95,14 +80,59 @@ tape( 'Number of connections should reflect multiple connectees', t => {
 
   t.equal( socket.connections.size, 0, 'socket connections should start at 0' )
 
-  var c1 = forkConnection( app.server )
-  var c2 = forkConnection( app.server )
-  
+  const c1 = forkConnection( app.server )
+  const c2 = forkConnection( app.server )
+
   // Give them 500ms to connect, that'll be more than enough and makes life simpler
   setTimeout( () => {
     t.equal( socket.connections.size, 2, '2 connectors should mean 2 number of connections' )
     c1.send({ action: 'disconnect' })
     c2.send({ action: 'disconnect' })
     app.server.close()
+  }, 500 )
+})
+
+tape( 'A specific connection can be picked from the list of active connections', t => {
+  t.plan( 1 )
+
+  const socket = new Socket()
+  const app = application( socket )
+
+  app.io.on( 'connection', sock => {
+    t.equal( socket.connections.has( sock.id ), true, 'The socket ID is contained in the connections map' )
+    sock.disconnect()
+  })
+
+  const client = connect( app.server )
+})
+
+tape( 'The connection list can be used to boot a client', t => {
+  t.plan( 2 )
+
+  const socket = new Socket()
+  const app = application( socket )
+
+  var id = null
+
+  app.io.on( 'connection', sock => {
+    t.equal( socket.connections.size, 1, 'The connected client is registered' )
+    id = sock.id
+  })
+
+  const client = connect( app.server )
+
+  client.on( 'disconnect', ctx => {
+    t.equal( socket.connections.size, 0, 'The client has been booted' )
+  })
+
+
+  // Do it some time in the future, and do it away from the connection socket instance
+  setTimeout( () => {
+    if ( id === null ) {
+      t.fail( 'Something went wrong with this test' )
+    }
+
+    let sock = socket.connections.get( id )
+    sock.socket.disconnect()
   }, 500 )
 })
