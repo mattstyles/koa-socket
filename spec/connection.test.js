@@ -112,11 +112,8 @@ tape( 'The connection list can be used to boot a client', t => {
   const socket = new Socket()
   const app = application( socket )
 
-  var id = null
-
   app.io.on( 'connection', sock => {
     t.equal( socket.connections.size, 1, 'The connected client is registered' )
-    id = sock.id
   })
 
   const client = connect( app.server )
@@ -128,11 +125,23 @@ tape( 'The connection list can be used to boot a client', t => {
 
   // Do it some time in the future, and do it away from the connection socket instance
   setTimeout( () => {
-    if ( id === null ) {
-      t.fail( 'Something went wrong with this test' )
-    }
-
-    let sock = socket.connections.get( id )
+    let sock = socket.connections.get( client.id )
     sock.socket.disconnect()
   }, 500 )
+})
+
+tape( 'A connection handler can be applied to the koaSocket instance', t => {
+  t.plan( 1 )
+
+  const socket = new Socket()
+  const app = application( socket )
+  const srv = app.server.listen()
+
+  const client = connect( srv )
+
+  socket.on( 'connection', ctx => {
+    t.pass( 'The socket connection handler is fired' )
+    ctx.socket.disconnect()
+  })
+
 })

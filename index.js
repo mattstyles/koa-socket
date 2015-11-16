@@ -60,7 +60,7 @@ module.exports = class IO {
       this.listeners.get( 'connection' )({
         event: 'connection',
         data: instance.id,
-        socket: instance
+        socket: instance.socket
       }, instance.id )
     }
 
