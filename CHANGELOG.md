@@ -3,6 +3,7 @@
 
 * _add_ allow runtime updates to middleware and listeners
 * _update_ test coverage
+* _add_ remove event listeners
 
 ## 3.0.0 - 16.11.2015
 
