@@ -7,28 +7,8 @@ const ioc = require( 'socket.io-client' )
 const Koa = require( 'koa' )
 const IO = require( '../' )
 
-// Attaches socket.io to a server
-function connect( srv, opts ) {
-  opts = Object.assign({
-    transports: [ 'websocket' ]
-  }, opts )
-  let addr = srv.address()
-  if ( !addr ) {
-    addr = srv.listen().address()
-  }
-  let client = ioc( 'ws://0.0.0.0:' + addr.port, opts )
-  client.on( 'disconnect', () => {
-    srv.close()
-  })
-  return client
-}
-
-function application( instance ) {
-  const app = new Koa()
-  const io = instance || new IO()
-  io.attach( app )
-  return app
-}
+const application = require( './helpers/utils' ).application
+const connection = require( './helpers/utils' ).connection
 
 
 tape( 'Listeners can be added during runtime to connected clients', t => {
@@ -37,7 +17,7 @@ tape( 'Listeners can be added during runtime to connected clients', t => {
   const io = new IO()
   const app = application( io )
 
-  const client = connect( app.server )
+  const client = connection( app.server )
 
   client.on( 'connect', () => {
     var called = false
@@ -71,7 +51,7 @@ tape( 'Middleware can be added during runtime to connected clients', t => {
   const io = new IO()
   const app = application( io )
 
-  const client = connect( app.server )
+  const client = connection( app.server )
 
   io.on( 'req1', ctx => {
     ctx.socket.emit( 'res1', ctx.foo )

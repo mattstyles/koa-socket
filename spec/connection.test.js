@@ -8,28 +8,8 @@ const ioc = require( 'socket.io-client' )
 const Koa = require( 'koa' )
 const Socket = require( '../' )
 
-// Attaches socket.io to a server
-function connect( srv, opts ) {
-  opts = Object.assign({
-    transports: [ 'websocket' ]
-  }, opts )
-  let addr = srv.address()
-  if ( !addr ) {
-    addr = srv.listen().address()
-  }
-  let client = ioc( 'ws://0.0.0.0:' + addr.port, opts )
-  client.on( 'disconnect', () => {
-    srv.close()
-  })
-  return client
-}
-
-function application( sock ) {
-  const app = new Koa()
-  const socket = sock || new Socket()
-  socket.attach( app )
-  return app
-}
+const application = require( './helpers/utils' ).application
+const connection = require( './helpers/utils' ).connection
 
 function forkConnection( srv ) {
   return fork( __dirname + '/helpers/connect', [
@@ -42,7 +22,7 @@ tape( 'Client connects to server', t => {
   t.plan( 1 )
 
   const socket = new Socket()
-  const client = connect( application( socket ).server )
+  const client = connection( application( socket ).server )
 
   client.on( 'connect', () => {
     client.disconnect()
@@ -57,7 +37,7 @@ tape( 'Number of connections should update when a client connects', t => {
 
   const socket = new Socket()
   const app = application( socket )
-  const client = connect( app.server )
+  const client = connection( app.server )
 
   t.equal( socket.connections.size, 0, 'socket connections should start at 0' )
 
@@ -103,7 +83,7 @@ tape( 'A specific connection can be picked from the list of active connections',
     sock.disconnect()
   })
 
-  const client = connect( app.server )
+  const client = connection( app.server )
 })
 
 tape( 'The connection list can be used to boot a client', t => {
@@ -116,7 +96,7 @@ tape( 'The connection list can be used to boot a client', t => {
     t.equal( socket.connections.size, 1, 'The connected client is registered' )
   })
 
-  const client = connect( app.server )
+  const client = connection( app.server )
 
   client.on( 'disconnect', ctx => {
     t.equal( socket.connections.size, 0, 'The client has been booted' )
@@ -137,7 +117,7 @@ tape( 'A connection handler can be applied to the koaSocket instance', t => {
   const app = application( socket )
   const srv = app.server.listen()
 
-  const client = connect( srv )
+  const client = connection( srv )
 
   socket.on( 'connection', ctx => {
     t.pass( 'The socket connection handler is fired' )
