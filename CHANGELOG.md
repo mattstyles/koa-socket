@@ -1,4 +1,9 @@
 
+##
+
+* _add_ allow runtime updates to middleware and listeners
+
+
 ## 3.0.0 - 16.11.2015
 
 * _update_ use class notation
