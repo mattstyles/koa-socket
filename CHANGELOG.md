@@ -2,7 +2,7 @@
 ##
 
 * _add_ allow runtime updates to middleware and listeners
-
+* _update_ test coverage
 
 ## 3.0.0 - 16.11.2015
 

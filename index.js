@@ -85,8 +85,7 @@ module.exports = class IO {
    * Adds a new listeners to the stack
    * @param event <String> the event id
    * @param handler <Function> the callback to execute
-   * @TODO multiple handlers should be able to be set on the event key
-   * this will require work in the Socket class to handle multiple handlers
+   * @return this
    */
   on( event, handler ) {
     let listeners = this.listeners.get( event )
@@ -100,6 +99,39 @@ module.exports = class IO {
 
     listeners.push( handler )
     this.listeners.set( event, listeners )
+    this.updateConnections()
+    return this
+  }
+
+  /**
+   * Removes a listener from the event
+   * @param event <String> if omitted will remove all listeners
+   * @param handler <Function> if omitted will remove all from the event
+   * @return this
+   */
+  off( event, handler ) {
+    if ( !event ) {
+      this.listeners = new Map()
+      this.updateConnections()
+      return this
+    }
+
+    if ( !handler ) {
+      this.listeners.delete( event )
+      this.updateConnections()
+      return this
+    }
+
+    let listeners = this.listeners.get( event )
+    let i = listeners.length - 1
+    while( i ) {
+      if ( listeners[ i ] === handler ) {
+        break
+      }
+      i--
+    }
+    listeners.splice( i, 1 )
+
     this.updateConnections()
     return this
   }
