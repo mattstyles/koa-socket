@@ -1,6 +1,8 @@
 
 'use strict';
 
+const fork = require( 'child_process' ).fork
+
 const tape = require( 'tape' )
 const ioc = require( 'socket.io-client' )
 const Koa = require( 'koa' )
@@ -29,6 +31,16 @@ function application( sock ) {
   return app
 }
 
+function forkConnection( srv ) {
+  // return fork( 'node', [
+  //   __dirname + '/helpers/connect',
+  //   '--port', srv.address().port
+  // ])
+  return fork( __dirname + '/helpers/connect', [
+    '--port', srv.address().port
+  ])
+}
+
 
 tape( 'Client connects to server', t => {
   t.plan( 1 )
@@ -44,7 +56,7 @@ tape( 'Client connects to server', t => {
   })
 })
 
-tape( 'Number of connections should reflect the number of client connections', t => {
+tape( 'Number of connections should update when a client connects', t => {
   t.plan( 3 )
 
   const socket = new Socket()
@@ -73,19 +85,24 @@ tape( 'Number of connections should reflect the number of client connections', t
 /**
  * @TODO
  */
-tape.skip( 'Number of connections should reflect multiple connectees', t => {
+tape( 'Number of connections should reflect multiple connectees', t => {
   t.plan( 2 )
 
   const socket = new Socket()
   const app = application( socket )
 
+  app.server.listen()
+
   t.equal( socket.connections.size, 0, 'socket connections should start at 0' )
 
-  const c1 = connect( app.server )
-  const c2 = connect( app.server )
-
+  var c1 = forkConnection( app.server )
+  var c2 = forkConnection( app.server )
+  
   // Give them 500ms to connect, that'll be more than enough and makes life simpler
   setTimeout( () => {
     t.equal( socket.connections.size, 2, '2 connectors should mean 2 number of connections' )
+    c1.send({ action: 'disconnect' })
+    c2.send({ action: 'disconnect' })
+    app.server.close()
   }, 500 )
 })
