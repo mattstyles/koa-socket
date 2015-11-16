@@ -92,7 +92,7 @@ module.exports = class IO {
     this.listeners.set( event, handler )
 
     this.updateConnections()
-    
+
     return this
   }
 

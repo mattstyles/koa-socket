@@ -61,11 +61,11 @@ tape( 'Number of connections should update when a client connects', t => {
 
   t.equal( socket.connections.size, 0, 'socket connections should start at 0' )
 
-  app.io.on( 'connection', sock => {
+  socket.on( 'connection', ctx => {
     t.equal( socket.connections.size, 1, 'one connections should be one connection' )
-    sock.disconnect()
+    ctx.socket.disconnect()
   })
-  socket.on( 'disconnect', sock => {
+  client.on( 'disconnect', ctx => {
     t.equal( socket.connections.size, 0, 'after a disconnect there should be 0 again' )
   })
 })
