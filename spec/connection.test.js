@@ -2,11 +2,8 @@
 'use strict';
 
 const fork = require( 'child_process' ).fork
-
 const tape = require( 'tape' )
-const ioc = require( 'socket.io-client' )
-const Koa = require( 'koa' )
-const Socket = require( '../' )
+const IO = require( '../' )
 
 const application = require( './helpers/utils' ).application
 const connection = require( './helpers/utils' ).connection
@@ -21,7 +18,7 @@ function forkConnection( srv ) {
 tape( 'Client connects to server', t => {
   t.plan( 1 )
 
-  const socket = new Socket()
+  const socket = new IO()
   const client = connection( application( socket ).server )
 
   client.on( 'connect', () => {
@@ -35,7 +32,7 @@ tape( 'Client connects to server', t => {
 tape( 'Number of connections should update when a client connects', t => {
   t.plan( 3 )
 
-  const socket = new Socket()
+  const socket = new IO()
   const app = application( socket )
   const client = connection( app.server )
 
@@ -53,7 +50,7 @@ tape( 'Number of connections should update when a client connects', t => {
 tape( 'Number of connections should reflect multiple connectees', t => {
   t.plan( 2 )
 
-  const socket = new Socket()
+  const socket = new IO()
   const app = application( socket )
 
   app.server.listen()
@@ -75,7 +72,7 @@ tape( 'Number of connections should reflect multiple connectees', t => {
 tape( 'A specific connection can be picked from the list of active connections', t => {
   t.plan( 1 )
 
-  const socket = new Socket()
+  const socket = new IO()
   const app = application( socket )
 
   app.io.on( 'connection', sock => {
@@ -89,7 +86,7 @@ tape( 'A specific connection can be picked from the list of active connections',
 tape( 'The connection list can be used to boot a client', t => {
   t.plan( 2 )
 
-  const socket = new Socket()
+  const socket = new IO()
   const app = application( socket )
 
   app.io.on( 'connection', sock => {
@@ -110,10 +107,10 @@ tape( 'The connection list can be used to boot a client', t => {
   }, 500 )
 })
 
-tape( 'A connection handler can be applied to the koaSocket instance', t => {
+tape( 'A connection handler can be applied to the koaIO instance', t => {
   t.plan( 1 )
 
-  const socket = new Socket()
+  const socket = new IO()
   const app = application( socket )
   const srv = app.server.listen()
 

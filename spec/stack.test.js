@@ -3,8 +3,6 @@
 
 const tape = require( 'tape' )
 const co = require( 'co' )
-const ioc = require( 'socket.io-client' )
-const Koa = require( 'koa' )
 const IO = require( '../' )
 
 const application = require( './helpers/utils' ).application

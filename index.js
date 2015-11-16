@@ -89,10 +89,17 @@ module.exports = class IO {
    * this will require work in the Socket class to handle multiple handlers
    */
   on( event, handler ) {
-    this.listeners.set( event, handler )
+    let listeners = this.listeners.get( event )
 
+    // If this is a new event then just set it
+    if ( !listeners ) {
+      this.listeners.set( event, [ handler ] )
+      this.updateConnections()
+      return this
+    }
+
+    this.listeners.set( event, listeners.push( handler ) )
     this.updateConnections()
-
     return this
   }
 
@@ -122,12 +129,15 @@ module.exports = class IO {
     })
 
     // Trigger the connection event if attached to the socket listener map
-    if ( this.listeners.has( 'connection' ) ) {
-      this.listeners.get( 'connection' )({
-        event: 'connection',
-        data: instance.id,
-        socket: instance.socket
-      }, instance.id )
+    let handlers = this.listeners.get( 'connection' )
+    if ( handlers ) {
+      handlers.forEach( handler => {
+        handler({
+          event: 'connection',
+          data: instance,
+          socket: instance.socket
+        }, instance.id )
+      })
     }
   }
 
