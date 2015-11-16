@@ -3,6 +3,8 @@
 
 const http = require( 'http' )
 const socketIO = require( 'socket.io' )
+const compose = require( 'koa-compose' )
+
 const Socket = require( './lib/socket' )
 
 
@@ -21,6 +23,12 @@ module.exports = class IO {
      * @type <Array:Function>
      */
     this.middleware = []
+
+    /**
+     * Composed middleware stack
+     * @type <Function>
+     */
+    this.composed = null
 
     /**
      * All of the listeners currently added to the IO instance
@@ -46,14 +54,16 @@ module.exports = class IO {
       throw new error( 'Sockets failed to initialise::Instance may already exist' )
     }
 
-    app.server = http.createServer( app.callback() )
-    app.io = socketIO( app.server )
-
+    // Add warning to conventional .listen
+    // @TODO should this just be removed?
     app.__listen = app.listen
     app.listen = function listen() {
       console.warn( 'IO is attached, did you mean app.server.listen()' )
       app.__listen.apply( app, arguments )
     }
+
+    app.server = http.createServer( app.callback() )
+    app.io = socketIO( app.server )
 
     app.io.on( 'connection', this.onConnection )
   }
@@ -64,6 +74,10 @@ module.exports = class IO {
    */
   use( fn ) {
     this.middleware.push( fn )
+    this.composed = compose( this.middleware )
+
+    this.updateConnections()
+
     return this
   }
 
@@ -76,6 +90,9 @@ module.exports = class IO {
    */
   on( event, handler ) {
     this.listeners.set( event, handler )
+
+    this.updateConnections()
+    
     return this
   }
 
@@ -97,7 +114,8 @@ module.exports = class IO {
    * @param sock <Socket.io Socket>
    */
   onConnection( sock ) {
-    let instance = new Socket( sock, this.listeners, this.middleware )
+    // let instance = new Socket( sock, this.listeners, this.middleware )
+    let instance = new Socket( sock, this.listeners, this.composed )
     this.connections.set( sock.id, instance )
     sock.on( 'disconnect', () => {
       this.onDisconnect( sock )
@@ -120,5 +138,14 @@ module.exports = class IO {
    */
   onDisconnect( sock ) {
     this.connections.delete( sock.id )
+  }
+
+  /**
+   * Updates all existing connections with current listeners and middleware
+   */
+  updateConnections() {
+    this.connections.forEach( connection => {
+      connection.update( this.listeners, this.composed )
+    })
   }
 }
