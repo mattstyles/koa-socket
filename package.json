@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node spec/index.js spec/*.test.js",
+    "cover": "istanbul cover --report lcovonly --print detail spec/index.js spec/*.test.js",
     "example": "node example/server"
   },
   "keywords": [
@@ -22,6 +23,8 @@
   },
   "devDependencies": {
     "co": "^4",
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.4.0",
     "koa": "^2.0.0-alpha.3",
     "minimist": "^1.2.0",
     "socket.io-client": "^1.3.7",
