@@ -138,7 +138,9 @@ Namespaces can be defined simply by instantiating a new instance of `koaSocket` 
 
 ```js
 const app = new Koa()
-const chat = new IO( 'chat' )
+const chat = new IO({
+  namespace: 'chat'
+})
 
 chat.attach( app )
 
@@ -152,13 +154,33 @@ Namespaces also attach themselves to the `app` instance, throwing an error if th
 
 ```js
 const app = new Koa()
-const chat = new IO( 'chat' )
+const chat = new IO({
+  namespace: 'chat'
+})
 
 chat.attach( app )
 
 app.chat.use( ... )
 app.chat.on( ... )
 app.chat.broadcast( ... )
+```
+
+The attachment is configurable if you don’t want to muddy the `app` object with all your namespaces.
+
+```js
+const chat = new IO({
+  namespace: 'chat',
+  hidden: true
+})
+
+chat.use( ... )
+chat.on( ... )
+```
+
+Namespaces are fairly ubiquitous so they get a dirty shorthand for creating them, note that if you want to add any additional options you’ll need to use the longhand object parameter to instantiate `koaSocket`.
+
+```js
+const chat = new IO( 'chat' )
 ```
 
 
