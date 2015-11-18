@@ -1,5 +1,7 @@
 
-[![Build Status](https://travis-ci.org/mattstyles/koa-socket.svg?branch=composer)](https://travis-ci.org/mattstyles/koa-socket) [![npm version](https://badge.fury.io/js/koa-socket.svg)](https://badge.fury.io/js/koa-socket)
+[![Build Status](https://travis-ci.org/mattstyles/koa-socket.svg?branch=composer)](https://travis-ci.org/mattstyles/koa-socket)
+[![npm version](https://badge.fury.io/js/koa-socket.svg)](https://badge.fury.io/js/koa-socket)
+[![Coverage Status](https://coveralls.io/repos/mattstyles/koa-socket/badge.svg?branch=master&service=github)](https://coveralls.io/github/mattstyles/koa-socket?branch=master)
 
 # Koa-socket
 
