@@ -17,7 +17,7 @@ module.exports = class IO {
    * @constructs
    * @param namespace <String> namespace identifier
    */
-  constructor( namespace ) {
+  constructor( opts ) {
     /**
      * List of middlewares, these are composed into an execution chain and
      * evaluated with each event
@@ -46,10 +46,30 @@ module.exports = class IO {
     this.connections = new Map()
 
     /**
-     * Namespace id of this instance
-     * @type <String>
+     * Configuration options
+     * @type <Object>
      */
-    this.namespace = namespace
+    this.opts = Object.assign({
+      /**
+       * Namespace id
+       * @type <String>
+       * @default null
+       */
+       namespace: null,
+
+       /**
+        * Hidden instances do not append to the koa app, but still require attachment
+        * @type <Boolean>
+        * @default false
+        */
+       hidden: false
+    }, opts )
+
+    /**
+     * Holds the socketIO connection
+     * @type <Socket.IO>
+     */
+    this.socket = null
 
     // Bind handlers
     this.onConnection = this.onConnection.bind( this )
@@ -64,7 +84,7 @@ module.exports = class IO {
     if ( app.server || app.io ) {
       // Without a namespace we’ll use the default, but .io already exists meaning
       // the default is taken already
-      if ( !this.namespace ) {
+      if ( !this.opts.namespace ) {
         throw new error( 'Sockets failed to initialise::Instance may already exist' )
       }
 
@@ -80,11 +100,15 @@ module.exports = class IO {
       app.__listen.apply( app, arguments )
     }
 
-    app.server = http.createServer( app.callback() )
-    app.io = socketIO( app.server )
+    if ( this.opts.hidden && !this.opts.namespace ) {
+      throw new Error( 'Default namespace can not be hidden' )
+    }
 
-    if ( this.namespace ) {
-      this.attachNamespace( app, this.namespace )
+    app.server = http.createServer( app.callback() )
+    this.socket = app.io = socketIO( app.server )
+
+    if ( this.opts.namespace ) {
+      this.attachNamespace( app, this.opts.namespace )
       return
     }
 
@@ -102,12 +126,18 @@ module.exports = class IO {
       throw new Error( 'Namespaces can only be attached once a socketIO instance has been attached' )
     }
 
+    this.socket = app.io.of( id )
+    this.socket.on( 'connection', this.onConnection )
+
+    if ( this.opts.hidden ) {
+      return
+    }
+
     if ( app[ id ] ) {
       throw new Error( 'Namespace ' + id + ' already attached to koa instance' )
     }
 
-    app[ id ] = app.io.of( id )
-    app[ id ].on( 'connection', this.onConnection )
+    app[ id ] = this.socket
   }
 
   /**
