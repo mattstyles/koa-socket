@@ -15,8 +15,9 @@ const Socket = require( './lib/socket' )
 module.exports = class IO {
   /**
    * @constructs
+   * @param namespace <String> namespace identifier
    */
-  constructor() {
+  constructor( namespace ) {
     /**
      * List of middlewares, these are composed into an execution chain and
      * evaluated with each event
@@ -44,6 +45,12 @@ module.exports = class IO {
      */
     this.connections = new Map()
 
+    /**
+     * Namespace id of this instance
+     * @type <String>
+     */
+    this.namespace = namespace
+
     // Bind handlers
     this.onConnection = this.onConnection.bind( this )
     this.onDisconnect = this.onDisconnect.bind( this )
@@ -51,7 +58,13 @@ module.exports = class IO {
 
   attach( app ) {
     if ( app.server || app.io ) {
-      throw new error( 'Sockets failed to initialise::Instance may already exist' )
+      // Without a namespace we’ll use the default, but .io already exists meaning
+      // the default is taken already
+      if ( !this.namespace ) {
+        throw new error( 'Sockets failed to initialise::Instance may already exist' )
+      }
+
+      this.attachNamespace( this.namespace )
     }
 
     // Add warning to conventional .listen
@@ -65,7 +78,31 @@ module.exports = class IO {
     app.server = http.createServer( app.callback() )
     app.io = socketIO( app.server )
 
+    if ( this.namespace ) {
+      attachNamespace( this.namespace )
+      return
+    }
+
+    // If there is no namespace then connect using the default
     app.io.on( 'connection', this.onConnection )
+  }
+
+  /**
+   * Attaches the namespace to the server
+   */
+  attachNamespace( id ) {
+    if ( !app.io ) {
+      throw new Error( 'Namespaces can only be attached once a socketIO instance has been attached' )
+    }
+
+    if ( app[ id ] ) {
+      throw new Error( 'Namespace already attached to koa instance' )
+    }
+
+    app[ id ] = app.io.of( id )
+    app[ id ].on( 'connection', this.onConnection )
+
+    return
   }
 
   /**

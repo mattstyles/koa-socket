@@ -8,8 +8,10 @@ const co = require( 'co' )
 
 const app = new Koa()
 const socket = new IO()
+const chat = new IO( 'chat' )
 
 socket.attach( app )
+chat.attach( app )
 
 /**
  * Koa Middlewares
@@ -71,6 +73,13 @@ socket.on( 'data', ( ctx, data ) => {
 })
 socket.on( 'numConnections', packet => {
   console.log( `Number of connections: ${ socket.connections.size }` )
+})
+
+/**
+ * Chat handlers
+ */
+chat.on( 'connection', ctx => {
+  console.log( 'Joining chat namespace', ctx.socket.id )
 })
 
 const PORT = 3000
