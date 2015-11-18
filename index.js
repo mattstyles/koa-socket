@@ -97,7 +97,7 @@ module.exports = class IO {
         throw new Error( 'Socket failed to initialise::Instance may already exist' )
       }
 
-      this.attachNamespace( app, this.namespace )
+      this.attachNamespace( app, this.opts.namespace )
       return
     }
 

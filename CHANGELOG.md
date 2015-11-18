@@ -2,7 +2,8 @@
 ##
 
 * _add_ namespace support
-
+* _add_ configure namespaces attaching to the app using `hidden`
+* _add_ 1-arity constructor
 
 ## 3.1.0
 
