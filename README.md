@@ -130,6 +130,37 @@ io.on( 'event', ( ctx, data ) => {
 })
 ```
 
+
+## Namespaces
+
+Namespaces can be defined simply by instantiating a new instance of `koaSocket` and passing the namespace id in the constructor. All other functionality works the same, it’ll just be constrained to the single namespace.
+
+```js
+const app = new Koa()
+const chat = new IO( 'chat' )
+
+chat.attach( app )
+
+chat.on( 'message', ctx => {
+  console.log( ctx.data )
+  chat.broadcast( 'response', ... )
+})
+```
+
+Namespaces also attach themselves to the `app` instance, throwing an error if the property name already exists.
+
+```js
+const app = new Koa()
+const chat = new IO( 'chat' )
+
+chat.attach( app )
+
+app.chat.use( ... )
+app.chat.on( ... )
+app.chat.broadcast( ... )
+```
+
+
 ## API
 
 ### .attach( `Koa app` )
