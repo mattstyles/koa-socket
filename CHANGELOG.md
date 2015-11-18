@@ -1,4 +1,9 @@
 
+##
+
+* _add_ namespace support
+
+
 ## 3.1.0
 
 * _add_ allow runtime updates to middleware and listeners
