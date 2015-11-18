@@ -1,5 +1,5 @@
 
-##
+## 3.2.0
 
 * _add_ namespace support
 * _add_ configure namespaces attaching to the app using `hidden`
