@@ -64,3 +64,16 @@ tape( 'Attaching a namespace to a \'clean\' koa app is fine', t => {
     chat.attach( app )
   }, null, 'Attaching only a namespace is fine' )
 })
+
+tape( 'Attaching a namespace should be done via an options object', t => {
+  t.plan( 1 )
+
+  const app = new Koa()
+  const chat = new IO({
+    namespace: 'chat'
+  })
+
+  t.doesNotThrow( () => {
+    chat.attach( app )
+  }, null, 'Attaching only a namespace via options hash is fine' )
+})
