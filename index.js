@@ -18,6 +18,10 @@ module.exports = class IO {
    * @param namespace <String> namespace identifier
    */
   constructor( opts ) {
+    if ( opts && !(typeof opts !== 'string' || opts && typeof opts !== 'object' ) ) {
+      throw new Error( 'Incorrect argument passed to koaSocket constructor' )
+    }
+
     /**
      * List of middlewares, these are composed into an execution chain and
      * evaluated with each event
@@ -49,6 +53,11 @@ module.exports = class IO {
      * Configuration options
      * @type <Object>
      */
+    if ( typeof opts === 'string' ) {
+      opts = {
+        namespace: opts
+      }
+    }
     this.opts = Object.assign({
       /**
        * Namespace id
@@ -85,7 +94,7 @@ module.exports = class IO {
       // Without a namespace we’ll use the default, but .io already exists meaning
       // the default is taken already
       if ( !this.opts.namespace ) {
-        throw new error( 'Sockets failed to initialise::Instance may already exist' )
+        throw new Error( 'Socket failed to initialise::Instance may already exist' )
       }
 
       this.attachNamespace( app, this.namespace )
@@ -105,7 +114,7 @@ module.exports = class IO {
     }
 
     app.server = http.createServer( app.callback() )
-    this.socket = app.io = socketIO( app.server )
+    app.io = socketIO( app.server )
 
     if ( this.opts.namespace ) {
       this.attachNamespace( app, this.opts.namespace )
@@ -113,7 +122,8 @@ module.exports = class IO {
     }
 
     // If there is no namespace then connect using the default
-    app.io.on( 'connection', this.onConnection )
+    this.socket = app.io
+    this.socket.on( 'connection', this.onConnection )
   }
 
   /**
