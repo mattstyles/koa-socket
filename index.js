@@ -56,6 +56,10 @@ module.exports = class IO {
     this.onDisconnect = this.onDisconnect.bind( this )
   }
 
+  /**
+   * Attach to a koa application
+   * @param app <Koa app> the koa app to use
+   */
   attach( app ) {
     if ( app.server || app.io ) {
       // Without a namespace we’ll use the default, but .io already exists meaning
@@ -64,7 +68,8 @@ module.exports = class IO {
         throw new error( 'Sockets failed to initialise::Instance may already exist' )
       }
 
-      this.attachNamespace( this.namespace )
+      this.attachNamespace( app, this.namespace )
+      return
     }
 
     // Add warning to conventional .listen
@@ -79,7 +84,7 @@ module.exports = class IO {
     app.io = socketIO( app.server )
 
     if ( this.namespace ) {
-      attachNamespace( this.namespace )
+      this.attachNamespace( app, this.namespace )
       return
     }
 
@@ -89,20 +94,20 @@ module.exports = class IO {
 
   /**
    * Attaches the namespace to the server
+   * @param app <Koa app> the koa app to use
+   * @param id <String> namespace identifier
    */
-  attachNamespace( id ) {
+  attachNamespace( app, id ) {
     if ( !app.io ) {
       throw new Error( 'Namespaces can only be attached once a socketIO instance has been attached' )
     }
 
     if ( app[ id ] ) {
-      throw new Error( 'Namespace already attached to koa instance' )
+      throw new Error( 'Namespace ' + id + ' already attached to koa instance' )
     }
 
     app[ id ] = app.io.of( id )
     app[ id ].on( 'connection', this.onConnection )
-
-    return
   }
 
   /**

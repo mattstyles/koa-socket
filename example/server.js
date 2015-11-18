@@ -81,6 +81,10 @@ socket.on( 'numConnections', packet => {
 chat.on( 'connection', ctx => {
   console.log( 'Joining chat namespace', ctx.socket.id )
 })
+chat.on( 'message', ctx => {
+  console.log( 'chat message received', ctx.data )
+  chat.broadcast( 'message', 'yo connections, lets chat' )
+})
 
 const PORT = 3000
 app.server.listen( 3000, () => {

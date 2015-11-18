@@ -53,6 +53,7 @@
 </head>
 <body>
   <button class="js-btn">Send</button>
+  <button class="js-chatBtn">Chat</button>
   <div class="connections"><span class="js-connect">1</span></div>
   <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
   <script>
@@ -72,6 +73,15 @@
 
     socket.on( 'response', function( event ) {
       console.log( 'response:', event.message )
+    })
+
+    var chat = io( 'http://localhost:3000/chat' )
+    chat.on( 'message', function( event ) {
+      console.log( 'chat message:', event )
+    })
+    var chatBtn = document.querySelector( '.js-chatBtn' )
+    chatBtn.addEventListener( 'click', function( event ) {
+      chat.emit( 'message', 'yo central, are you on the line?' )
     })
   </script>
 </body>
