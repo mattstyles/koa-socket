@@ -6,6 +6,7 @@
   "scripts": {
     "test": "node spec/index.js spec/*.test.js",
     "cover": "istanbul cover --report lcovonly --print detail spec/index.js spec/*.test.js",
+    "travis": "npm run cover && cat coverage/lcov.info | coveralls",
     "example": "node example/server"
   },
   "keywords": [
