@@ -7,7 +7,8 @@
     "test": "node spec/index.js spec/*.test.js",
     "cover": "istanbul cover --report lcovonly --print detail spec/index.js spec/*.test.js",
     "travis": "npm run cover && cat coverage/lcov.info | coveralls",
-    "example": "node example/server"
+    "example": "node example/server",
+    "example-babel": "babel-node --plugins transform-async-to-generator example/babelasync"
   },
   "keywords": [
     "koa",
@@ -23,6 +24,8 @@
     "socket.io": "^1.1.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.2.0",
+    "babel-plugin-transform-async-to-generator": "^6.1.18",
     "co": "^4",
     "coveralls": "^2.11.4",
     "istanbul": "^0.4.0",
