@@ -72,6 +72,10 @@ app.server.listen( process.env.PORT || 3000 )
 
 Middleware can be added to sockets in much the same way as it is added to a koa instance, currently only generator functions can be used and they must be used in the same way that koa v2 uses them i.e. with `co.wrap`.
 
+### Example with generator functions
+
+In the same way as koa v2 uses generator functions, you’ll need to wrap your function in `co.wrap`
+
 ```js
 const Koa = require( 'koa' )
 const IO = require( 'koa-socket' )
@@ -96,6 +100,31 @@ io.on( 'message', ( ctx, data ) => {
 
 io.attach( app )
 app.server.listen( 3000 );
+```
+
+### Example with *async* functions (transpilation required)
+
+```js
+io.use( async ( ctx, next ) {
+  let start = new Date()
+  await next()
+  console.log( `response time: ${ new Date() - start }ms` )
+})
+```
+
+There is an example in the `examples` folder, use `npm run example-babel` to fire it up. The npm script relies on the `babel` require hook, which is not recommended in production.
+
+### Plain example
+
+Whilst slightly unwieldy, the standalone method also works
+
+```js
+io.use( ( ctx, next ) => {
+  let start = new Date()
+  return next().then( () => {
+    console.log( `response time: ${ new Date() - start }ms` )
+  })
+})
 ```
 
 
