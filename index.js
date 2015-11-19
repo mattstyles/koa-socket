@@ -106,7 +106,7 @@ module.exports = class IO {
     app.__listen = app.listen
     app.listen = function listen() {
       console.warn( 'IO is attached, did you mean app.server.listen()' )
-      app.__listen.apply( app, arguments )
+      return app.__listen.apply( app, arguments )
     }
 
     if ( this.opts.hidden && !this.opts.namespace ) {

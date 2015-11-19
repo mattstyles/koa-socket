@@ -129,3 +129,24 @@ tape( 'The default namespace can not be hidden, app.io must be attached to app',
     io.attach( app )
   }, null, 'Attaching a hidden default instance will throw' )
 })
+
+tape( 'Calling app.listen logs a console warning message', t => {
+  t.plan( 2 )
+
+  const prev = console.warn
+  console.warn = function() {
+    t.pass( 'Calling app.listen generated a console warning' )
+  }
+
+  const app = new Koa()
+  const io = new IO()
+
+  io.attach( app )
+
+  t.doesNotThrow( () => {
+    var srv = app.listen( () => {
+      console.warn = prev
+      srv.close()
+    })
+  }, 'Calling app.listen does not throw' )
+})
