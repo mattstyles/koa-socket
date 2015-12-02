@@ -8,7 +8,9 @@
 
 > Sugar for connecting socket.io to a koa instance
 
-**Koa-socket** is now compatible with koa v2, v0.4.0 of koa-socket is the last version to support koa v1.x. As such, `koa-socket` now requires **node v4.0.0** or higher and **koa v2.0.0** or higher.
+**Koa-socket** is now compatible with koa v2 style of middleware (where context is passed as a parameter), v0.4.0 of koa-socket is the last version to support the old style of middleware.
+
+As such, koa-socket now requires **node v4.0.0** or higher although koa-socket simply attaches to the server instance so will be compatible with a koa v1 powered app.
 
 
 ## Installation
