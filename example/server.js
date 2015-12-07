@@ -71,6 +71,10 @@ socket.on( 'data', ( ctx, data ) => {
     message: 'response from server'
   })
 })
+socket.on( 'ack', ( ctx, data ) => {
+  console.log( 'data event with acknowledgement', data )
+  ctx.acknowledge( 'received' )
+})
 socket.on( 'numConnections', packet => {
   console.log( `Number of connections: ${ socket.connections.size }` )
 })
