@@ -71,7 +71,14 @@ module.exports = class IO {
         * @type <Boolean>
         * @default false
         */
-       hidden: false
+       hidden: false,
+
+       /**
+        * Options to pass when instantiating socket.io
+        * @type <Object>
+        * @default {}
+        */
+       ioOptions: {}
     }, opts )
 
     /**
@@ -114,7 +121,7 @@ module.exports = class IO {
     }
 
     app.server = http.createServer( app.callback() )
-    app._io = socketIO( app.server )
+    app._io = socketIO( app.server, this.opts.ioOptions )
 
     if ( this.opts.namespace ) {
       this.attachNamespace( app, this.opts.namespace )
