@@ -1,5 +1,7 @@
 ##
 
+* _fix_ use new socket.io identifier type
+* _update_ dependencies
 * _fix_ attach IO instance and not the raw socket for namespaced instances
 
 

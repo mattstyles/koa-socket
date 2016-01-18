@@ -102,7 +102,8 @@ tape( 'The connection list can be used to boot a client', t => {
 
   // Do it some time in the future, and do it away from the connection socket instance
   setTimeout( () => {
-    let sock = socket.connections.get( client.id )
+    // use /# as id's are socket.io ids are now namespace + '#' + clientID
+    let sock = socket.connections.get( '/#' + client.id )
     sock.socket.disconnect()
   }, 500 )
 })
