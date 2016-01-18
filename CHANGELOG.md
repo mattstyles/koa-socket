@@ -1,5 +1,6 @@
 ##
 
+* _add_ allow passing options to socket.io instance
 * _update_ attach raw socket.io instance
 * _update_ attach IO instance for default namespace
 * _fix_ use new socket.io identifier type

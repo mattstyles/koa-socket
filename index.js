@@ -121,7 +121,7 @@ module.exports = class IO {
     }
 
     app.server = http.createServer( app.callback() )
-    app._io = socketIO( app.server, this.opts.ioOptions )
+    app._io = new socketIO( app.server, this.opts.ioOptions )
 
     if ( this.opts.namespace ) {
       this.attachNamespace( app, this.opts.namespace )
