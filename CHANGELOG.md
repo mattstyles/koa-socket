@@ -1,4 +1,5 @@
-##
+
+## 4.0.0 - 18.01.2016
 
 * _add_ allow passing options to socket.io instance
 * _update_ attach raw socket.io instance
@@ -7,14 +8,20 @@
 * _update_ dependencies
 * _fix_ attach IO instance and not the raw socket for namespaced instances
 
+### Breaking changes
 
-## 3.2.0
+* koaSocket now attaches instances of itself to the `app`, whereas previously it attaches the socket.io instance. This facilitates accessing `koaSocket` instances from any `app` middleware without having to pass it around as a dependency, the raw socket.io instance is still available as `koaSocket.socket`.
+* The raw socket.io instance is now attached as `._io`, whilst the default namespace becomes `.io` if it exists.
+* Made it explicit that `koaSocket` only supports node v4 as its lowest version.
+
+
+## 3.2.0 - 18.11.2015
 
 * _add_ namespace support
 * _add_ configure namespaces attaching to the app using `hidden`
 * _add_ 1-arity constructor
 
-## 3.1.0
+## 3.1.0 - 16.11.2015
 
 * _add_ allow runtime updates to middleware and listeners
 * _update_ test coverage
