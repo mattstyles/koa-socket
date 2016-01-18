@@ -147,7 +147,7 @@ module.exports = class IO {
       throw new Error( 'Namespace ' + id + ' already attached to koa instance' )
     }
 
-    app[ id ] = this.socket
+    app[ id ] = this
   }
 
   /**

@@ -87,7 +87,8 @@ chat.on( 'connection', ctx => {
 })
 chat.on( 'message', ctx => {
   console.log( 'chat message received', ctx.data )
-  chat.broadcast( 'message', 'yo connections, lets chat' )
+  // app.chat.broadcast( 'message', 'yo connections, lets chat' )
+  chat.broadcast( 'message', 'ok connections:chat' )
 })
 
 const PORT = 3000
