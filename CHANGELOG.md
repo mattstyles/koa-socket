@@ -1,3 +1,7 @@
+##
+
+* _fix_ attach IO instance and not the raw socket for namespaced instances
+
 
 ## 3.2.0
 
