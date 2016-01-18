@@ -18,7 +18,7 @@
     "websocket"
   ],
   "engines": {
-    "node": ">= 4",
+    "node": ">= 4"
   },
   "author": "Matt Styles",
   "license": "MIT",
