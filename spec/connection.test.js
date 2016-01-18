@@ -75,7 +75,11 @@ tape( 'A specific connection can be picked from the list of active connections',
   const socket = new IO()
   const app = application( socket )
 
-  app.io.on( 'connection', sock => {
+  app._io.on( 'connection', sock => {
+    for ( var key of socket.connections.keys() ) {
+      console.log( key )
+    }
+    console.log( sock.id )
     t.equal( socket.connections.has( sock.id ), true, 'The socket ID is contained in the connections map' )
     sock.disconnect()
   })

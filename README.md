@@ -65,6 +65,11 @@ io.attach( app )
 // Socket is now available as app.io if you prefer
 app.io.on( event, eventHandler )
 
+// The raw socket.io instance is attached as app._io if you need it
+app._io.on( 'connection', sock => {
+  // ...
+})
+
 // Make sure the `app.server` instance starts listening on a port
 app.server.listen( process.env.PORT || 3000 )
 ```

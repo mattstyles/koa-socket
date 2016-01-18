@@ -90,7 +90,7 @@ module.exports = class IO {
    * @param app <Koa app> the koa app to use
    */
   attach( app ) {
-    if ( app.server || app.io ) {
+    if ( app.server || app._io ) {
       // Without a namespace we’ll use the default, but .io already exists meaning
       // the default is taken already
       if ( !this.opts.namespace ) {
@@ -114,15 +114,18 @@ module.exports = class IO {
     }
 
     app.server = http.createServer( app.callback() )
-    app.io = socketIO( app.server )
+    app._io = socketIO( app.server )
 
     if ( this.opts.namespace ) {
       this.attachNamespace( app, this.opts.namespace )
       return
     }
 
+    // Attach default namespace
+    app.io = this
+
     // If there is no namespace then connect using the default
-    this.socket = app.io
+    this.socket = app._io
     this.socket.on( 'connection', this.onConnection )
   }
 
@@ -132,11 +135,11 @@ module.exports = class IO {
    * @param id <String> namespace identifier
    */
   attachNamespace( app, id ) {
-    if ( !app.io ) {
+    if ( !app._io ) {
       throw new Error( 'Namespaces can only be attached once a socketIO instance has been attached' )
     }
 
-    this.socket = app.io.of( id )
+    this.socket = app._io.of( id )
     this.socket.on( 'connection', this.onConnection )
 
     if ( this.opts.hidden ) {
