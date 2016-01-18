@@ -52,12 +52,12 @@ socket.use( co.wrap( function *( ctx, next ) {
  */
 socket.on( 'connection', ctx => {
   console.log( 'Join event', ctx.socket.id )
-  // socket.broadcast( 'connections', {
-  //   numConnections: socket.connections.size
-  // })
-  app.io.broadcast( 'connections', {
+  socket.broadcast( 'connections', {
     numConnections: socket.connections.size
   })
+  // app.io.broadcast( 'connections', {
+  //   numConnections: socket.connections.size
+  // })
 })
 
 socket.on( 'disconnect', ctx => {

@@ -1,9 +1,12 @@
 
 'use strict';
 
+const http = require( 'http' )
+
 const tape = require( 'tape' )
 const Koa = require( 'koa' )
 const ioc = require( 'socket.io-client' )
+const socketIO = require( 'socket.io' )
 const IO = require( '../' )
 
 const application = require( './helpers/utils' ).application
@@ -20,16 +23,16 @@ tape( 'socket.start alters the app to include socket.io', t => {
   t.ok( app.server, 'server created linking socket and the koa callback' )
 })
 
-tape( 'should not alter a koa app that already has .io unless called with a namespace', t => {
+tape( 'should not alter a koa app that already has ._io unless called with a namespace', t => {
   t.plan( 1 )
 
   const app = new Koa()
   const socket = new IO()
-  app.io = {}
+  app._io = {}
 
   t.throws( () => {
     socket.attach( app )
-  }, null, 'calling .attach throws an error when .io already exists without a namespace' )
+  }, null, 'calling .attach throws an error when ._io already exists without a namespace' )
 })
 
 tape( 'should not alter a koa app that already has .server', t => {
@@ -70,8 +73,24 @@ tape( 'Attaching a namespace to a \'clean\' koa app is fine', t => {
     chat.attach( app )
 
     t.ok( app.chat, 'the chat namespace has been attached to the app' )
-    t.ok( app.io, 'io will be attached, it just isnt listening' )
+    t.ok( app._io, 'io will be attached, it just isnt listening' )
   }, null, 'Attaching only a namespace is fine' )
+})
+
+tape( 'Manually creating the socketIO instance and attaching namespaces without a default is fine', t => {
+  t.plan( 1 )
+
+  const app = new Koa()
+  const chat = new IO( 'chat' )
+
+  const server = http.createServer( app.callback() )
+  const io = socketIO( server )
+  app._io = io
+
+  t.doesNotThrow( () => {
+    chat.attach( app )
+  }, null, 'Attaching a namespace is fine' )
+
 })
 
 tape( 'Attaching a namespace should be done via an options object', t => {

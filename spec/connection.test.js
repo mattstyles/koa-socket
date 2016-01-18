@@ -24,7 +24,7 @@ tape( 'Client connects to server', t => {
   client.on( 'connect', () => {
     client.disconnect()
   })
-  socket.on( 'disconnect', socket => {
+  socket.on( 'disconnect', ctx => {
     t.pass( 'connect-disconnect cleanly' )
   })
 })
@@ -76,10 +76,6 @@ tape( 'A specific connection can be picked from the list of active connections',
   const app = application( socket )
 
   app._io.on( 'connection', sock => {
-    for ( var key of socket.connections.keys() ) {
-      console.log( key )
-    }
-    console.log( sock.id )
     t.equal( socket.connections.has( sock.id ), true, 'The socket ID is contained in the connections map' )
     sock.disconnect()
   })
@@ -93,7 +89,7 @@ tape( 'The connection list can be used to boot a client', t => {
   const socket = new IO()
   const app = application( socket )
 
-  app.io.on( 'connection', sock => {
+  app._io.on( 'connection', sock => {
     t.equal( socket.connections.size, 1, 'The connected client is registered' )
   })
 
