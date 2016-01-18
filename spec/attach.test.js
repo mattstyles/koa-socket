@@ -88,6 +88,17 @@ tape( 'Attaching a namespace should be done via an options object', t => {
   }, null, 'Attaching only a namespace via options hash is fine' )
 })
 
+tape( 'Attaching a namespace will attach the IO class', t => {
+  t.plan( 2 )
+
+  const app = new Koa()
+  const chat = new IO( 'chat' )
+
+  chat.attach( app )
+  t.ok( app.chat, 'the chat namespace has been attached to the app' )
+  t.ok( app.chat instanceof IO, 'an IO instance has been attached' )
+})
+
 tape( 'Namespaces can be hidden from the app object', t => {
   t.plan( 2 )
 
