@@ -97,7 +97,25 @@ module.exports = class IO {
    * @param app <Koa app> the koa app to use
    */
   attach( app ) {
-    if ( app.server || app._io ) {
+
+    if ( app.server && app.server.constructor.name != 'Server' ) {
+      throw new Error( 'app.server already exists but it\'s not an http server' );
+    }
+
+    if ( !app.server ) {
+      // Create a server if it doesn't already exists
+      app.server = http.createServer( app.callback() )
+
+      // Add warning to conventional .listen
+      // @TODO should this just be removed?
+      app.__listen = app.listen
+      app.listen = function listen() {
+        console.warn( 'IO is attached, did you mean app.server.listen()' )
+        return app.__listen.apply( app, arguments )
+      }
+    }
+
+    if ( app._io ) {
       // Without a namespace we’ll use the default, but .io already exists meaning
       // the default is taken already
       if ( !this.opts.namespace ) {
@@ -108,19 +126,10 @@ module.exports = class IO {
       return
     }
 
-    // Add warning to conventional .listen
-    // @TODO should this just be removed?
-    app.__listen = app.listen
-    app.listen = function listen() {
-      console.warn( 'IO is attached, did you mean app.server.listen()' )
-      return app.__listen.apply( app, arguments )
-    }
-
     if ( this.opts.hidden && !this.opts.namespace ) {
       throw new Error( 'Default namespace can not be hidden' )
     }
 
-    app.server = http.createServer( app.callback() )
     app._io = new socketIO( app.server, this.opts.ioOptions )
 
     if ( this.opts.namespace ) {
