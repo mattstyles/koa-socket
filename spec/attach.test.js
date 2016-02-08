@@ -35,7 +35,18 @@ tape( 'should not alter a koa app that already has ._io unless called with a nam
   }, null, 'calling .attach throws an error when ._io already exists without a namespace' )
 })
 
-tape( 'should not alter a koa app that already has .server', t => {
+tape( 'should work with koa app that already has .server', t => {
+  t.plan( 1 )
+
+  const app = new Koa()
+  const socket = new IO()
+  app.server = http.createServer()
+  socket.attach( app )
+
+  t.ok( app.io, 'socket is attached to koa app' )
+})
+
+tape( 'shouldn\'t work if app.server exists but it\'s not an http server', t => {
   t.plan( 1 )
 
   const app = new Koa()
@@ -44,7 +55,7 @@ tape( 'should not alter a koa app that already has .server', t => {
 
   t.throws( () => {
     socket.attach( app )
-  }, null, 'calling .attach throws an error when .server already exists' )
+  }, null, 'calling .attach throws an error when .server already exists but it\'s not an http server' )
 })
 
 tape( 'Attaching a namespace to a koa app with socket.io existing is all cool', t => {

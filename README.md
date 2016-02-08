@@ -48,7 +48,7 @@ app.server.listen( process.env.PORT || 3000 )
 
 ## Attaching to existing projects
 
-The `attach` function is used to attach the `IO` instance to the application, this adds `server` and `io` properties to the koa application and should happen before the app starts listening on a port.
+The `attach` function is used to attach the `IO` instance to the application, this adds `server`\* and `io` properties to the koa application and should happen before the app starts listening on a port. \*If `app.server` already exists (as an http server), it uses that instead.
 
 The only change you need to make to your existing code is to start the server listening by calling `app.server.listen` rather than `app.listen` (you’ll get a console warning if you get it wrong ;) ).
 
