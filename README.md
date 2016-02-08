@@ -36,7 +36,7 @@ io.on( 'join', ( ctx, data ) => {
   console.log( 'join event fired', data )
 })
 
-app.server.listen( process.env.PORT || 3000 )
+app.listen( process.env.PORT || 3000 )
 ```
 
 ## Features
@@ -48,9 +48,9 @@ app.server.listen( process.env.PORT || 3000 )
 
 ## Attaching to existing projects
 
-The `attach` function is used to attach the `IO` instance to the application, this adds `server`\* and `io` properties to the koa application and should happen before the app starts listening on a port. \*If `app.server` already exists (as an http server), it uses that instead.
+The `attach` function is used to attach the `IO` instance to the application, this adds `server`\* and `io` properties to the koa application and should happen before the app starts listening on a port.
 
-The only change you need to make to your existing code is to start the server listening by calling `app.server.listen` rather than `app.listen` (you’ll get a console warning if you get it wrong ;) ).
+It also re-maps `app.listen` to `app.server.listen`, so you could simply do `app.listen()`. However if you already had an `app.server` attached, it uses it instead and expects you to do `app.server.listen()` yourself.
 
 ```js
 const Koa = require( 'koa' )
@@ -70,10 +70,12 @@ app._io.on( 'connection', sock => {
   // ...
 })
 
-// Make sure the `app.server` instance starts listening on a port
+// app.listen is mapped to app.server.listen, so you can just do:
+app.listen( process.env.PORT || 3000 )
+
+// *If* you had manually attached an `app.server` yourself, you should do:
 app.server.listen( process.env.PORT || 3000 )
 ```
-
 
 ## Middleware and event handlers
 
@@ -106,7 +108,7 @@ io.on( 'message', ( ctx, data ) => {
 })
 
 io.attach( app )
-app.server.listen( 3000 );
+app.listen( 3000 );
 ```
 
 ### Example with *async* functions (transpilation required)
@@ -228,7 +230,7 @@ Attaches to a koa application
 
 ```js
 io.attach( app )
-app.server.listen( process.env.PORT )
+app.listen( process.env.PORT )
 ```
 
 ### .use( `Function callback` )
