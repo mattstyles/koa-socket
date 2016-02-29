@@ -1,5 +1,9 @@
 
-## 4.1.0 - 29.02.2016
+## 4.2.0 - 29.02.2016
+
+* _update_ patch `app.listen` [laggingreflex](https://github.com/laggingreflex)
+
+## 4.1.0
 
 * _update_ use an http server if one already exists [laggingreflex](https://github.com/laggingreflex)
 
