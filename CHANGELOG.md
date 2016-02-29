@@ -1,4 +1,8 @@
 
+## 4.1.0 - 29.02.2016
+
+* _update_ use an http server if one already exists [laggingreflex](https://github.com/laggingreflex)
+
 ## 4.0.0 - 18.01.2016
 
 * _add_ allow passing options to socket.io instance
