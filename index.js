@@ -105,13 +105,9 @@ module.exports = class IO {
     if ( !app.server ) {
       // Create a server if it doesn't already exists
       app.server = http.createServer( app.callback() )
-
-      // Add warning to conventional .listen
-      // @TODO should this just be removed?
-      app.__listen = app.listen
-      app.listen = function listen() {
-        console.warn( 'IO is attached, did you mean app.server.listen()' )
-        return app.__listen.apply( app, arguments )
+      // Patch `app.listen()` to call `app.server.listen()`
+      app.listen = function listen(){
+        app.server.listen.call(app.server, arguments);
       }
     }
 
