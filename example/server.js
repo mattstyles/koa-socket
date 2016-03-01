@@ -95,6 +95,6 @@ chat.on( 'message', ctx => {
 })
 
 const PORT = 3000
-app.server.listen( 3000, () => {
+app.listen( 3000, () => {
   console.log( `Listening on ${ PORT }` )
 } )

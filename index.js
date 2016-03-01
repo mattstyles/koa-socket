@@ -105,9 +105,10 @@ module.exports = class IO {
     if ( !app.server ) {
       // Create a server if it doesn't already exists
       app.server = http.createServer( app.callback() )
+
       // Patch `app.listen()` to call `app.server.listen()`
       app.listen = function listen(){
-        app.server.listen.call(app.server, arguments);
+        app.server.listen.apply( app.server, arguments )
       }
     }
 

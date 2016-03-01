@@ -75,6 +75,6 @@ io.on( 'numConnections', packet => {
 
 
 const PORT = 3000
-app.server.listen( 3000, () => {
+app.listen( 3000, () => {
   console.log( `Listening on ${ PORT }` )
 } )
