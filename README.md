@@ -79,11 +79,24 @@ app.server.listen( process.env.PORT || 3000 )
 
 ## Middleware and event handlers
 
-Middleware can be added to sockets in much the same way as it is added to a koa instance, currently only generator functions can be used and they must be used in the same way that koa v2 uses them i.e. with `co.wrap`.
+Middleware can be added in much the same way as it can be added to any regular koa instance.
+
+### Example with *async* functions (transpilation required)
+
+```js
+io.use( async ( ctx, next ) {
+  let start = new Date()
+  await next()
+  console.log( `response time: ${ new Date() - start }ms` )
+})
+```
+
+There is an example in the `examples` folder, use `npm run example-babel` to fire it up. The npm script relies on the `babel` require hook, which is not recommended in production.
+
 
 ### Example with generator functions
 
-In the same way as koa v2 uses generator functions, you’ll need to wrap your function in `co.wrap`
+Koa v2 no longer supports generators so if you are using v2 then you must use `co.wrap` to have access to the generator style.
 
 ```js
 const Koa = require( 'koa' )
@@ -111,18 +124,6 @@ io.attach( app )
 app.listen( 3000 );
 ```
 
-### Example with *async* functions (transpilation required)
-
-```js
-io.use( async ( ctx, next ) {
-  let start = new Date()
-  await next()
-  console.log( `response time: ${ new Date() - start }ms` )
-})
-```
-
-There is an example in the `examples` folder, use `npm run example-babel` to fire it up. The npm script relies on the `babel` require hook, which is not recommended in production.
-
 ### Plain example
 
 Whilst slightly unwieldy, the standalone method also works
@@ -143,25 +144,26 @@ io.use( ( ctx, next ) => {
 let ctx = {
   event: listener.event,
   data: data,
-  socket: Socket
+  socket: Socket,
+  acknowledge: cb
 }
 ```
 
-The context passed to each socket middleware and handler begins the chain with the event that triggered the response, the data sent with that event and the socket instance that is handling the event.
+The context passed to each socket middleware and handler begins the chain with the event that triggered the response, the data sent with that event and the socket instance that is handling the event. There is also a shorthand for firing an acknowledgement back to the client.
 
 As the context is passed to each function in the response chain it is fair game for mutation at any point along that chain, it is up to you to decide whether this is an anti-pattern or not. There was much discussion around this topic for koa v2.
 
 
 ```js
-io.use( co.wrap( function *( ctx, next ) {
+io.use( async ( ctx, next ) {
   ctx.process = process.pid
-  yield next()
-}))
+  await next()
+})
 
-io.use( co.wrap( function *( ctx, next ) {
+io.use( async ( ctx, next ) {
   // ctx is passed along so ctx.process is now available
   console.log( ctx.process )
-}))
+})
 
 io.on( 'event', ( ctx, data ) => {
   // ctx is passed all the way through to the end point
@@ -237,19 +239,19 @@ app.listen( process.env.PORT )
 
 Applies middleware to the stack.
 
-Middleware are executed each time an event is heard and before the callback is triggered for events.
+Middleware are executed each time an event is reacted to and before the callback is triggered for an event.
 
 Middleware with generators should use `co.wrap`.
 
-Middleware functions are called with `ctx` and `next`. The context is passed through each middleware and out to the event listener callback. `next` allows the middleware chain to be traversed—use of generators provides and upstream and a downstream allowing for an expressive middleware stack.
+Middleware functions are called with `ctx` and `next`. The context is passed through each middleware and out to the event listener callback. `next` allows the middleware chain to be traversed. Under the hood `koa-compose` is used to follow functionality with `koa`.
 
 
 ```js
-io.use( co.wrap( function *( ctx, next ) {
+io.use( async ( ctx, next ) {
   console.log( 'Upstream' )
-  yield next()
+  await next()
   console.log( 'Downstream' )
-}))
+})
 ```
 
 ### .on( `String event`, `Function callback` )
