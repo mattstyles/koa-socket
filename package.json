@@ -23,18 +23,18 @@
   "author": "Matt Styles",
   "license": "MIT",
   "dependencies": {
-    "koa-compose": "3.0.0",
-    "socket.io": "1.4.4"
+    "koa-compose": "3.1.0",
+    "socket.io": "1.4.5"
   },
   "devDependencies": {
-    "babel-cli": "6.4.0",
-    "babel-plugin-transform-async-to-generator": "6.4.0",
+    "babel-cli": "6.6.4",
+    "babel-plugin-transform-async-to-generator": "6.7.0",
     "co": "4.6.0",
     "coveralls": "2.11.6",
     "istanbul": "0.4.2",
     "koa": "^2.0.0-alpha.3",
     "minimist": "^1.2.0",
     "socket.io-client": "1.4.4",
-    "tape": "4.4.0"
+    "tape": "4.5.1"
   }
 }
