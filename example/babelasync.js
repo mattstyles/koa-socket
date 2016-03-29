@@ -65,7 +65,7 @@ io.on( 'data', ( ctx, data ) => {
   console.log( 'data event', data )
   console.log( 'ctx:', ctx.event, ctx.data, ctx.socket.id )
   console.log( 'ctx.teststring:', ctx.teststring )
-  ctx.io.emit( 'response', {
+  ctx.socket.emit( 'response', {
     message: 'response from server'
   })
 })

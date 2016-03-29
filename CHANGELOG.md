@@ -1,4 +1,8 @@
 
+## 4.3.0 - 29.03.2016
+
+* _add_ `socket.broadcast` helper for broadcast emit
+
 ## 4.2.0 - 29.02.2016
 
 * _update_ patch `app.listen` [laggingreflex](https://github.com/laggingreflex)
