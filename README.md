@@ -84,7 +84,7 @@ Middleware can be added in much the same way as it can be added to any regular k
 ### Example with *async* functions (transpilation required)
 
 ```js
-io.use( async ( ctx, next ) {
+io.use( async ( ctx, next ) => {
   let start = new Date()
   await next()
   console.log( `response time: ${ new Date() - start }ms` )
@@ -155,12 +155,12 @@ As the context is passed to each function in the response chain it is fair game 
 
 
 ```js
-io.use( async ( ctx, next ) {
+io.use( async ( ctx, next ) => {
   ctx.process = process.pid
   await next()
 })
 
-io.use( async ( ctx, next ) {
+io.use( async ( ctx, next ) => {
   // ctx is passed along so ctx.process is now available
   console.log( ctx.process )
 })
