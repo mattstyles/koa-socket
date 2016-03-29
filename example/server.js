@@ -7,10 +7,10 @@ const IO = require( '../' )
 const co = require( 'co' )
 
 const app = new Koa()
-const socket = new IO()
+const io = new IO()
 const chat = new IO( 'chat' )
 
-socket.attach( app )
+io.attach( app )
 chat.attach( app )
 
 /**
@@ -35,14 +35,14 @@ app.use( ctx => {
 /**
  * Socket middlewares
  */
-socket.use( co.wrap( function *( ctx, next ) {
+io.use( co.wrap( function *( ctx, next ) {
   console.log( 'Socket middleware' )
   const start = new Date
   yield next()
   const ms = new Date - start
   console.log( `WS ${ ms }ms` )
 }))
-socket.use( co.wrap( function *( ctx, next ) {
+io.use( co.wrap( function *( ctx, next ) {
   ctx.teststring = 'test'
   yield next()
 }))
@@ -50,23 +50,23 @@ socket.use( co.wrap( function *( ctx, next ) {
 /**
  * Socket handlers
  */
-socket.on( 'connection', ctx => {
+io.on( 'connection', ctx => {
   console.log( 'Join event', ctx.socket.id )
-  socket.broadcast( 'connections', {
-    numConnections: socket.connections.size
+  io.broadcast( 'connections', {
+    numConnections: io.connections.size
   })
   // app.io.broadcast( 'connections', {
   //   numConnections: socket.connections.size
   // })
 })
 
-socket.on( 'disconnect', ctx => {
+io.on( 'disconnect', ctx => {
   console.log( 'leave event', ctx.socket.id )
-  socket.broadcast( 'connections', {
-    numConnections: socket.connections.size
+  io.broadcast( 'connections', {
+    numConnections: io.connections.size
   })
 })
-socket.on( 'data', ( ctx, data ) => {
+io.on( 'data', ( ctx, data ) => {
   console.log( 'data event', data )
   console.log( 'ctx:', ctx.event, ctx.data, ctx.socket.id )
   console.log( 'ctx.teststring:', ctx.teststring )
@@ -74,12 +74,12 @@ socket.on( 'data', ( ctx, data ) => {
     message: 'response from server'
   })
 })
-socket.on( 'ack', ( ctx, data ) => {
+io.on( 'ack', ( ctx, data ) => {
   console.log( 'data event with acknowledgement', data )
   ctx.acknowledge( 'received' )
 })
-socket.on( 'numConnections', packet => {
-  console.log( `Number of connections: ${ socket.connections.size }` )
+io.on( 'numConnections', packet => {
+  console.log( `Number of connections: ${ io.connections.size }` )
 })
 
 /**
@@ -90,8 +90,15 @@ chat.on( 'connection', ctx => {
 })
 chat.on( 'message', ctx => {
   console.log( 'chat message received', ctx.data )
-  // app.chat.broadcast( 'message', 'yo connections, lets chat' )
-  chat.broadcast( 'message', 'ok connections:chat' )
+
+  // Broadcasts to everybody, including this connection
+  app.chat.broadcast( 'message', 'yo connections, lets chat' )
+
+  // Broadcasts to all other connections
+  ctx.socket.broadcast( 'message', 'ok connections:chat:broadcast' )
+
+  // Emits to just this socket
+  ctx.socket.emit( 'message', 'ok connections:chat:emit' )
 })
 
 const PORT = 3000
