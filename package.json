@@ -20,6 +20,7 @@
   "engines": {
     "node": ">= 4"
   },
+  "repository": "mattstyles/koa-socket",
   "author": "Matt Styles",
   "license": "MIT",
   "dependencies": {
