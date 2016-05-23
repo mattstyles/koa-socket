@@ -1,4 +1,9 @@
 
+## 4.4.0 - 23.05.2016
+
+* _update_ return server instance [farmisen](https://github.com/farmisen)
+* _update_ examples
+
 ## 4.3.0 - 29.03.2016
 
 * _add_ `socket.broadcast` helper for broadcast emit
