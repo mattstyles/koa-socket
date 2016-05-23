@@ -109,6 +109,7 @@ module.exports = class IO {
       // Patch `app.listen()` to call `app.server.listen()`
       app.listen = function listen(){
         app.server.listen.apply( app.server, arguments )
+        return app.server
       }
     }
 
